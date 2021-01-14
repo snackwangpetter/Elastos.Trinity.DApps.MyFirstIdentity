@@ -1,0 +1,51 @@
+{
+  "id": "org.elastos.trinity.dapp.myfirstidentity",
+  "version": "0.0.1",
+  "version_code": 1,
+  "name": "My First Identity",
+  "short_name": "My First Identity",
+  "short_description": "Eases onboarding of new users with a temporary DID",
+  "description": "This dApp is a trinity native specific dApp, helping new users to onboard in the native app with a temporary DID in case they don't have a elastOS DID yet.",
+  "start_url": "index.html",
+  "type": "app",
+  "start_visible": "hide",
+  "category": "tool",
+  "icons": [
+    {
+      "src": "assets/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/images/logo.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    }
+  ],
+  "author": {
+    "name": "Trinity Tech Co., Ltd.",
+    "email": "contact@trinity-tech.io",
+    "website": "https://www.trinity-tech.io"
+  },
+  "default_locale": "en",
+  "plugins": [
+    "Device",
+    "NetworkStatus"
+  ],
+  "urls": [
+  ],
+  "intent_filters": [
+    {
+      "action": "intentdestinationproxy"
+    },
+    {
+      "action": "https://did.elastos.net/appidcredissue"
+    },
+    {
+      "action": "https://did.elastos.net/credaccess"
+    }
+  ],
+  "background_color": "#4e8ef7",
+  "theme_display": "show",
+  "theme_color": "#4e8ef7"
+}
