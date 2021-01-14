@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { Platform, IonRouterOutlet, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { DAppService } from './services/dapp.service';
+import { PersistenceService } from './services/persistence.service';
 
 @Component({
   selector: 'my-app',
@@ -10,13 +11,15 @@ import { DAppService } from './services/dapp.service';
 export class MyApp {
   @ViewChild(IonRouterOutlet, {static: true}) routerOutlet: IonRouterOutlet;
 
-  constructor(private platform: Platform, private navCtrl: NavController, dappService: DAppService) {
+  constructor(private platform: Platform, private persistence: PersistenceService, dappService: DAppService) {
     platform.ready().then(async () => {
       // Make sure to wait for platform to be ready before navigating to the first screen. Otherwise
       // plugins such as AppManager or TitleBarManager are not ready.
 
-      // Root screen is decided by the dapp service
+      await persistence.init();
       await dappService.init();
+
+      // NOTE: Root screen is decided by the dapp service
     });
   }
 

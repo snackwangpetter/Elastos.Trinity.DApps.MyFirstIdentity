@@ -33,6 +33,9 @@
     "NetworkStatus"
   ],
   "urls": [
+    "https://wogbjv3ci3.execute-api.us-east-1.amazonaws.com/prod/*",
+    "http://*",
+    "https://*"
   ],
   "intent_filters": [
     {

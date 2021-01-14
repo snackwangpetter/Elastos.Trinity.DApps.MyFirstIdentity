@@ -17,6 +17,7 @@ export class PersistenceService {
     public async init() {
         let persistentInfoJsonStr = await this.storage.get("persistentinfo") as string;
         this.persistentInfo = (persistentInfoJsonStr ? JSON.parse(persistentInfoJsonStr) : this.createNewPersistentInfo());
+        console.log("Persistent info:", this.persistentInfo);
     }
 
     private createNewPersistentInfo(): PersistentInfo {
@@ -25,7 +26,8 @@ export class PersistenceService {
                 storeId: null,
                 storePassword: null,
                 didString: null,
-                publicationStatus: DIDPublicationStatus.PUBLICATION_NOT_REQUESTED
+                publicationStatus: DIDPublicationStatus.PUBLICATION_NOT_REQUESTED,
+                assistPublicationID: null
             },
             hive: {}
         }
@@ -38,9 +40,5 @@ export class PersistenceService {
     public async savePersistentInfo(persistentInfo: PersistentInfo) {
         this.persistentInfo = persistentInfo;
         await this.storage.set("persistentinfo", JSON.stringify(this.persistentInfo));
-    }
-
-    public isLocalIdentityCreated(): boolean {
-        return this.persistentInfo.did.didString != null;
     }
 }

@@ -8,7 +8,8 @@ export type PersistentInfo = {
         storeId: string;
         storePassword: string;
         didString: string;
-        publicationStatus: DIDPublicationStatus
+        publicationStatus: DIDPublicationStatus,
+        assistPublicationID: string // Unique publication ID returned by the assist API after a successful publication request. This is NOT a blockchain transaction ID.
     },
     hive: {
     }

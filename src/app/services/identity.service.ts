@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as TrinitySDK from '@elastosfoundation/trinity-dapp-sdk';
 import { DIDPublicationStatus } from '../model/didpublicationstatus.model';
 import { PersistenceService } from './persistence.service';
@@ -7,6 +7,19 @@ import { StorageService } from './storage.service';
 import { resolve } from 'url';
 
 declare let didManager: DIDPlugin.DIDManager;
+
+type AssistCreateTxResponse =
+{
+    meta: {
+        code: number,
+        message: string
+    },
+    data: {
+        confirmation_id: string,
+        service_count: number,
+        duplicate: boolean
+    }
+}
 
 @Injectable({
     providedIn: 'root'
@@ -21,6 +34,13 @@ export class IdentityService {
     public async createLocalIdentity() {
         let persistentInfo = this.persistence.getPersistentInfo();
         let createdDIDInfo = await this.didHelper.fastCreateDID(DIDPlugin.MnemonicLanguage.ENGLISH);
+
+        if (!createdDIDInfo) {
+            console.error("Null DID returned!");
+            return;
+        }
+
+        console.log("DID has been created:", createdDIDInfo);
 
         // Save the created DID info. We don't bother user with manual passwords or mnemonics, as this is a "temporary"
         // identity only.
@@ -49,42 +69,85 @@ export class IdentityService {
      * Publish the DID using assist api
      */
     public async publishIdentity(): Promise<void> {
-        let persistentInfo = this.persistence.getPersistentInfo();
-        let didStore = await this.openDidStore(persistentInfo.did.storeId, (payload: string, memo: string)=>{
-            // Callback called by the DID SDK when trying to publish a DID.
-            let payloadAsJson = JSON.parse(payload);
-            this.publishDIDOnAssist(persistentInfo.did.didString, payloadAsJson, memo);
-        });
-        let localDIDDocument = await this.loadLocalDIDDocument(didStore, persistentInfo.did.didString);
+        console.log("Starting the DID publication process");
 
-        localDIDDocument.publish(persistentInfo.did.storePassword, ()=>{
-            // Publish process complete
-        }, (err)=>{
-            // Publish process errored
+        return new Promise(async (resolve, reject)=>{
+            let persistentInfo = this.persistence.getPersistentInfo();
+
+            let didStore = await this.openDidStore(persistentInfo.did.storeId, async (payload: string, memo: string)=>{
+                // Callback called by the DID SDK when trying to publish a DID.
+                console.log("Create ID transaction callback is being called", payload, memo);
+                let payloadAsJson = JSON.parse(payload);
+                try {
+                    await this.publishDIDOnAssist(persistentInfo.did.didString, payloadAsJson, memo);
+                    resolve();
+                }
+                catch (err) {
+                    reject(err);
+                }
+            });
+
+            let localDIDDocument = await this.loadLocalDIDDocument(didStore, persistentInfo.did.didString);
+            localDIDDocument.publish(persistentInfo.did.storePassword, ()=>{}, (err)=>{
+                // Local "publish" process errored
+                console.log("Local DID Document publish(): error", err);
+                reject(err);
+            });
         });
     }
 
     // DOC FOR ASSIST API: https://github.com/tuum-tech/assist-restapi-backend#verify
     private publishDIDOnAssist(didString: string, payloadObject: any, memo: string) {
-        let assistAPIEndpoint = "https://wogbjv3ci3.execute-api.us-east-1.amazonaws.com/prod/";
-        let assistAPIKey = "IdSFtQosmCwCB9NOLltkZrFy5VqtQn8QbxBKQoHPw7zp3w0hDOyOYjgL53DO3MDH";
+        return new Promise((resolve, reject)=>{
+            console.log("Requesting identity publication to Assist");
 
-        let requestBody = {
-            "did": didString,
-            "memo": memo,
-            "requestFrom": "org.elastos.trinity.dapp.myfirstidentity",
-            "didRequest": payloadObject
-        };
+            let assistAPIEndpoint = "https://wogbjv3ci3.execute-api.us-east-1.amazonaws.com/prod";
+            let assistAPIKey = "IdSFtQosmCwCB9NOLltkZrFy5VqtQn8QbxBKQoHPw7zp3w0hDOyOYjgL53DO3MDH";
 
-        this.http.post(assistAPIEndpoint+"/didtx/create", requestBody, {
-            headers: {
+            let requestBody = {
+                "did": didString,
+                "memo": memo || "",
+                "requestFrom": "org.elastos.trinity.dapp.myfirstidentity",
+                "didRequest": payloadObject
+            };
+
+            console.log("Assist API request body:", requestBody);
+
+            let headers = new HttpHeaders({
+                "Content-Type": "application/json",
                 "Authorization": assistAPIKey
-            }
-        }).subscribe(async response => {
-            console.log("Assist response:", response);
-        }, (err) => {
-            console.log("Assist api call error:", err);
+            });
+
+            this.http.post(assistAPIEndpoint+"/v1/didtx/create", requestBody, {
+                headers: headers
+            }).toPromise().then(async (response: AssistCreateTxResponse) => {
+                console.log("Assist successful response:", response);
+                if (response && response.meta && response.meta.code == 200 && response.data.confirmation_id) {
+                    console.log("All good, DID has been submitted. Now waiting.");
+
+                    let persistentInfo = this.persistence.getPersistentInfo();
+                    persistentInfo.did.publicationStatus = DIDPublicationStatus.AWAITING_PUBLICATION_CONFIRMATION;
+                    persistentInfo.did.assistPublicationID = response.data.confirmation_id;
+                    await this.persistence.savePersistentInfo(persistentInfo);
+
+                    resolve();
+                } else {
+                    let error = "Successful response received from the assist API, but response can't be understood";
+                    reject(error);
+                }
+            }).catch((err) => {
+                console.log("Assist api call error:", err);
+                reject(err);
+            });
         });
+    }
+
+    /**
+     * Checks the publication status on the assist API, for a previously saved ID.
+     */
+    public async checkRemotePublicationStatus(): Promise<void> {
+        // TODO
+        return Promise.resolve();
     }
 
     private openDidStore(storeId: string, createIdTransactionCallback: DIDPlugin.OnCreateIdTransaction): Promise<DIDPlugin.DIDStore> {

@@ -1,26 +1,41 @@
 <ion-content class="ion-text-center">
   <ion-grid class="container">
 
-    <div *ngIf="!temporaryIdentityCreationStarted">
+    <div *ngIf="!wasTemporaryIdentityCreationStarted()">
+      <h1>Welcome</h1>
       <p>This application uses decentralized identities (DIDs). With decentralized identities, you own your identity, your data. So it seems that you either don't know what this is yet, or you have never created your own DID? We are here to help! The following steps will automatically create and publish a brand new Elastos identity and storage space for you.</p>
       <p>In the future, if you want to better control or use this identity in other DID-powered applications, you may export it to a third party wallet application such as elastOS.</p>
 
-      <div class="btn ion-activatable ripple" (click)="newDID()">
-        <ion-label>Create my Identity</ion-label>
-        <ion-ripple-effect></ion-ripple-effect>
-      </div>
+      <ion-button class="btn ion-activatable ripple" (click)="newDID()">
+        Create my Identity
+      </ion-button>
     </div>
-    <div *ngIf="temporaryIdentityCreationStarted">
-      <p>Step 1: Creating your identity on the device...</p>
-      <p>Step 2: Publishing your identity on the public decentralized registry... This will take a few minutes, please hold on.</p>
-      <p>Step 3: Configuring your decentralized storage...</p>
-      <p>All done! You now have a DID. When you better understand the advantages of DIDs later, you can export it and reuse it in other apps.</p>
+    <div *ngIf="wasTemporaryIdentityCreationStarted()">
+      <ion-row>
+        <ion-col size="2" *ngIf="isLocalDIDcreated()"><b>DONE</b></ion-col>
+        <ion-col size="2" *ngIf="!isLocalDIDcreated()"><b>...</b></ion-col>
+        <ion-col size="10">Step 1: Identity creation on the device...</ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="2" *ngIf="isDIDOnChain()"><b>DONE</b></ion-col>
+        <ion-col size="2" *ngIf="!isDIDOnChain() && isDIDBeingPublished()"><b>ON GOING</b></ion-col>
+        <ion-col size="2" *ngIf="!isDIDOnChain() && !isDIDBeingPublished()"><b>...</b></ion-col>
+        <ion-col size="10">Step 2: Getting your identity ready on the public decentralized registry... This will take a few minutes, please hold on.</ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="2" *ngIf="isHiveVaultReady()"><b>DONE</b></ion-col>
+        <ion-col size="2" *ngIf="!isHiveVaultReady()"><b>...</b></ion-col>
+        <ion-col size="10">Step 3: Personal storage configuration</ion-col>
+      </ion-row>
+
+      <p *ngIf="isEverythingReady()">All done! You now have a DID. When you better understand the advantages of DIDs later, you can export it and reuse it in other apps.</p>
     </div>
 
-    <div class="btn ion-activatable ripple" (click)="finalizeOriginalIntent()">
-      <ion-label>Debug: send credaccess response</ion-label>
-      <ion-ripple-effect></ion-ripple-effect>
-    </div>
+    <ion-button class="btn ion-activatable ripple" (click)="finalizeOriginalIntent()">
+      Debug: send credaccess response
+    </ion-button>
 
   </ion-grid>
 </ion-content>
