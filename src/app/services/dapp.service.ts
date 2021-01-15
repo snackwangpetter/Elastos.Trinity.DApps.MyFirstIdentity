@@ -70,10 +70,31 @@ export class DAppService {
                 this.zone.run(()=>this.navCtrl.navigateRoot("identitysetup"));
             }
         }
+        else if (receivedIntent.action.startsWith("https://did.elastos.net/appidcredissue")) {
+            let applicationDID = await this.getApplicationDID();
+            await this.identityService.generateAndSendApplicationIDCredentialIntentResponse(applicationDID, receivedIntent);
+        }
+        else {
+            console.error("Unhandled intent!");
+        }
     }
 
     public getReceivedIntent(): AppManagerPlugin.ReceivedIntent {
         return this.receivedIntent;
+    }
+
+    /**
+     * Returns the application DID as defined in the manifest
+     */
+    public getApplicationDID(): Promise<string> {
+        return new Promise((resolve, reject)=>{
+            let intent = this.getReceivedIntent();
+            appManager.getAppInfo(intent.from, (appInfo)=>{
+                resolve(appInfo.did);
+            }, (err)=>{
+                reject(err);
+            });
+        });
     }
 
     public sleep(ms: number): Promise<void> {

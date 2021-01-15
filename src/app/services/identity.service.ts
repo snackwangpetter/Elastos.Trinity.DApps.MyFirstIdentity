@@ -8,7 +8,9 @@ import { resolve } from 'url';
 import { HiveService } from './hive.service';
 import { Hive } from '@elastosfoundation/trinity-dapp-sdk';
 import { HiveCreationStatus } from '../model/hivecreationstatus.model';
+import { DAppService } from './dapp.service';
 
+declare let appManager: AppManagerPlugin.AppManager;
 declare let didManager: DIDPlugin.DIDManager;
 
 const assistAPIEndpoint = "https://wogbjv3ci3.execute-api.us-east-1.amazonaws.com/prod";
@@ -319,4 +321,39 @@ export class IdentityService {
             });
         });
     }
+
+    /**
+     * Generates a appid credential for hive authentication, silently
+     */
+    public async generateAndSendApplicationIDCredentialIntentResponse(mainNativeApplicationDID: string, intent: AppManagerPlugin.ReceivedIntent) {
+        let persistentInfo = this.persistence.getPersistentInfo();
+
+        console.log("Generating appid credential");
+        console.log("User DID:",persistentInfo.did.didString);
+
+        let properties = {
+          appInstanceDid: intent.params.appinstancedid,
+          appDid: mainNativeApplicationDID,
+        };
+
+        console.log("Properties:", properties);
+
+        let userDID = await this.getLocalDID();
+        userDID.issueCredential(
+            intent.params.appinstancedid,
+            "#app-id-credential",
+            ['AppIdCredential'],
+            30, // one month - after that, we'll need to generate this credential again.
+            properties,
+            persistentInfo.did.storePassword,
+            async (issuedCredential) => {
+              console.log("Sending appidcredissue intent response for intent id " + intent.intentId);
+              let credentialAsString = await issuedCredential.toString();
+              await appManager.sendIntentResponse(null, {
+                credential: credentialAsString
+              }, intent.intentId);
+            }, async (err) => {
+              console.error("Failed to issue the app id credential...", err);
+            });
+      }
 }

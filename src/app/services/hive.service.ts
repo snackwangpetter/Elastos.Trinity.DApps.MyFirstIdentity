@@ -12,14 +12,15 @@ export class HiveService {
     private availableHideNodeProviders: string[] = [
         "https://hive1.trinity-tech.io",
         "https://hive2.trinity-tech.io"
+        //"http://192.168.31.114:5000"
     ];
 
     private hiveClient: HivePlugin.Client;
 
     constructor(private storage: StorageService, private persistence: PersistenceService) {}
 
-    public async getHiveClient(): Promise<HivePlugin.Client> {
-        if (this.hiveClient)
+    public async getHiveClient(forceNewClient = false): Promise<HivePlugin.Client> {
+        if (this.hiveClient && !forceNewClient)
             return this.hiveClient;
 
         let hiveAuthHelper = new TrinitySDK.Hive.AuthHelper();
@@ -30,9 +31,10 @@ export class HiveService {
         return this.hiveClient;
     }
 
-    public async getUserVault(): Promise<HivePlugin.Vault> {
-        let signedInUserDID = await this.storage.getSignedInDID();
-        return await (await this.getHiveClient()).getVault(signedInUserDID);
+    public async getUserVault(forceNewClient = false): Promise<HivePlugin.Vault> {
+        let persistentInfo = this.persistence.getPersistentInfo();
+        let client = await this.getHiveClient(forceNewClient);
+        return await client.getVault(persistentInfo.did.didString);
     }
 
     /**
@@ -59,7 +61,7 @@ export class HiveService {
 
         let persistenceInfo = await this.persistence.getPersistentInfo();
         try {
-            let vault = await hiveClient.createVault(persistenceInfo.did.didString, "https://hive2.trinity-tech.io" /* TODO TMP persistenceInfo.hive.vaultProviderAddress*/);
+            let vault = await hiveClient.createVault(persistenceInfo.did.didString, persistenceInfo.hive.vaultProviderAddress);
             // We don't check if the vault is null or not. NULL without exception means the vault already exists, so that's ok.
 
             vault = await hiveClient.getVault(persistenceInfo.did.didString);

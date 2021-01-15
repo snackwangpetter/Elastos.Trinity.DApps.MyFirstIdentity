@@ -28,14 +28,6 @@ export class StorageService {
             });
         });
     }
-
-    public async getSignedInDID(): Promise<string> {
-        return this.get<string>("signedindid");
-    }
-
-    public async setSignedInDID(didString: string): Promise<void> {
-        return this.set("signedindid", didString);
-    }
 }
 
 
