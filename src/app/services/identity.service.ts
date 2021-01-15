@@ -5,19 +5,51 @@ import { DIDPublicationStatus } from '../model/didpublicationstatus.model';
 import { PersistenceService } from './persistence.service';
 import { StorageService } from './storage.service';
 import { resolve } from 'url';
+import { HiveService } from './hive.service';
+import { Hive } from '@elastosfoundation/trinity-dapp-sdk';
+import { HiveCreationStatus } from '../model/hivecreationstatus.model';
 
 declare let didManager: DIDPlugin.DIDManager;
 
-type AssistCreateTxResponse =
-{
+const assistAPIEndpoint = "https://wogbjv3ci3.execute-api.us-east-1.amazonaws.com/prod";
+const assistAPIKey = "IdSFtQosmCwCB9NOLltkZrFy5VqtQn8QbxBKQoHPw7zp3w0hDOyOYjgL53DO3MDH";
+
+type AssistBaseResponse = {
     meta: {
         code: number,
         message: string
-    },
+    }
+}
+
+type AssistCreateTxResponse = AssistBaseResponse & {
     data: {
         confirmation_id: string,
         service_count: number,
         duplicate: boolean
+    }
+}
+
+enum AssistTransactionStatus {
+    PENDING = "Pending",
+    PROCESSING = "Processing",
+    COMPLETED = "Completed",
+    QUARANTINED = "Quarantined",
+    ERROR = "Error"
+}
+
+type AssistTransactionStatusResponse = AssistBaseResponse & {
+    data: {
+        id: string, // Confirmation ID as requested
+        did: string, // DID, without did:elastos prefix
+        requestFrom: string, // App package id of the requester
+        didRequest: any, // Unhandled for now
+        status: AssistTransactionStatus,
+        memo: string,
+        extraInfo: any, // Unhandled for now
+        blockchainTxId: string,
+        blockchainTx: any,
+        created: string, // Creation date, in no clear format for now
+        modified: string // Modification (?) date, in no clear format for now
     }
 }
 
@@ -27,8 +59,24 @@ type AssistCreateTxResponse =
 export class IdentityService {
     private didHelper: TrinitySDK.DID.DIDHelper;
 
-    constructor(private persistence: PersistenceService, private http: HttpClient) {
+    constructor(private persistence: PersistenceService, private http: HttpClient, private hiveService: HiveService) {
         this.didHelper = new TrinitySDK.DID.DIDHelper();
+    }
+
+    /**
+     * Tells if the identity is fully ready to use (so we can proceed to real intent requests) or if it needs
+     * to be setup first.
+     */
+    public async identityIsFullyReadyToUse(): Promise<boolean> {
+        let persistentInfo = this.persistence.getPersistentInfo();
+
+        if (persistentInfo.did.publicationStatus == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED &&
+            persistentInfo.hive.creationStatus == HiveCreationStatus.VAULT_CREATED_AND_VERIFIED) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     public async createLocalIdentity() {
@@ -50,6 +98,12 @@ export class IdentityService {
         persistentInfo.did.publicationStatus = DIDPublicationStatus.PUBLICATION_NOT_REQUESTED;
 
         await this.persistence.savePersistentInfo(persistentInfo);
+    }
+
+    public async getLocalDID(): Promise<DIDPlugin.DID> {
+        let persistentInfo = this.persistence.getPersistentInfo();
+        let didStore = await this.didHelper.openDidStore(persistentInfo.did.storeId);
+        return await this.didHelper.loadDID(didStore, persistentInfo.did.didString);
     }
 
     /**
@@ -88,6 +142,12 @@ export class IdentityService {
             });
 
             let localDIDDocument = await this.loadLocalDIDDocument(didStore, persistentInfo.did.didString);
+
+            // Hive support: we directly automatically select a random hive node and define it as a service in the
+            // DID document, before we publish at first. Because we don't want to publish the DID 2 times.
+            await this.addRandomHiveToDIDDocument(localDIDDocument, persistentInfo.did.storePassword);
+
+            // Start the publication flow
             localDIDDocument.publish(persistentInfo.did.storePassword, ()=>{}, (err)=>{
                 // Local "publish" process errored
                 console.log("Local DID Document publish(): error", err);
@@ -96,12 +156,33 @@ export class IdentityService {
         });
     }
 
+    private addRandomHiveToDIDDocument(localDIDDocument: DIDPlugin.DIDDocument, storePassword: string): Promise<void> {
+        return new Promise((resolve, reject)=>{
+            let randomHideNodeAddress = this.hiveService.getRandomQuickStartHiveNodeAddress();
+            if (randomHideNodeAddress) {
+                let service = didManager.ServiceBuilder.createService('#hivevault', 'HiveVault', randomHideNodeAddress);
+                localDIDDocument.addService(service, storePassword, async ()=>{
+                    // Save this hive address to persistence for later use
+                    let persistentInfo = this.persistence.getPersistentInfo();
+                    persistentInfo.hive.vaultProviderAddress = randomHideNodeAddress;
+                    await this.persistence.savePersistentInfo(persistentInfo);
+
+                    resolve();
+                }, (err)=>{
+                    reject(err);
+                });
+            }
+            else {
+                reject("Hive node address cannot be null");
+            }
+        });
+    }
+
     // DOC FOR ASSIST API: https://github.com/tuum-tech/assist-restapi-backend#verify
     private publishDIDOnAssist(didString: string, payloadObject: any, memo: string) {
         return new Promise((resolve, reject)=>{
             console.log("Requesting identity publication to Assist");
 
-            let assistAPIEndpoint = "https://wogbjv3ci3.execute-api.us-east-1.amazonaws.com/prod";
             let assistAPIKey = "IdSFtQosmCwCB9NOLltkZrFy5VqtQn8QbxBKQoHPw7zp3w0hDOyOYjgL53DO3MDH";
 
             let requestBody = {
@@ -145,9 +226,62 @@ export class IdentityService {
     /**
      * Checks the publication status on the assist API, for a previously saved ID.
      */
-    public async checkRemotePublicationStatus(): Promise<void> {
-        // TODO
-        return Promise.resolve();
+    public async checkPublicationStatusAndUpdate(): Promise<void> {
+        return new Promise((resolve, reject)=>{
+            let persistentInfo = this.persistence.getPersistentInfo();
+
+            console.log("Requesting identity publication status to Assist for confirmation ID "+persistentInfo.did.assistPublicationID);
+
+            let headers = new HttpHeaders({
+                "Content-Type": "application/json",
+                "Authorization": assistAPIKey
+            });
+
+            this.http.get(assistAPIEndpoint+"/v1/didtx/confirmation_id/"+persistentInfo.did.assistPublicationID, {
+                headers: headers
+            }).toPromise().then(async (response: AssistTransactionStatusResponse) => {
+                console.log("Assist successful response:", response);
+                if (response && response.meta && response.meta.code == 200 && response.data.status) {
+                    console.log("All good, We got a clear status from the assist api:", response.data.status);
+
+                    if (response.data.status == AssistTransactionStatus.PENDING || response.data.status == AssistTransactionStatus.PROCESSING) {
+                        // Transaction is still pending, we do nothing, just wait and retry later.
+                        console.log("Publication is still pending / processing / not confirmed.");
+                    }
+                    else if (response.data.status == AssistTransactionStatus.QUARANTINED) {
+                        // Blocking issue. This publication was quarantined, there is "something wrong somewhere".
+                        // So to make things more reliable, we just delete everything and restart the process
+                        // from scratch.
+                        console.log("Publication request was quarantined! Deleting the identity and trying again.");
+                        await this.resetOnGoingProcess();
+                    }
+                    else if (response.data.status == AssistTransactionStatus.COMPLETED) {
+                        // Publication is now on chain, so we can change our local status.
+                        let persistentInfo = this.persistence.getPersistentInfo();
+                        persistentInfo.did.publicationStatus = DIDPublicationStatus.PUBLISHED_AND_CONFIRMED;
+                        await this.persistence.savePersistentInfo(persistentInfo);
+                    }
+                    else {
+                        console.error("Unhandled transaction status received from assist:", response.data.status);
+                    }
+
+                    resolve();
+                } else {
+                    let error = "Successful response received from the assist API, but response can't be understood";
+                    reject(error);
+                }
+            }).catch((err) => {
+                console.log("Assist api call error:", err);
+                reject(err);
+            });
+        });
+    }
+
+    /**
+     * Resets the whole process as if we were at the beginning.
+     */
+    private async resetOnGoingProcess() {
+        await this.persistence.reset();
     }
 
     private openDidStore(storeId: string, createIdTransactionCallback: DIDPlugin.OnCreateIdTransaction): Promise<DIDPlugin.DIDStore> {
@@ -170,14 +304,14 @@ export class IdentityService {
         });
     }
 
-    public createCredaccessPresentation(): Promise<DIDPlugin.VerifiablePresentation> {
+    public createCredaccessPresentation(credentials: DIDPlugin.VerifiableCredential[]): Promise<DIDPlugin.VerifiablePresentation> {
         return new Promise(async (resolve)=>{
             let persistentInfo = this.persistence.getPersistentInfo();
             let didStore = await this.didHelper.openDidStore(persistentInfo.did.storeId);
             let did = await this.didHelper.loadDID(didStore, persistentInfo.did.didString);
 
             // TODO: embed the "name" credential when we have this configuration available on the UI.
-            did.createVerifiablePresentation([], "", "", persistentInfo.did.storePassword, (presentation)=>{
+            did.createVerifiablePresentation(credentials, "none", "none", persistentInfo.did.storePassword, (presentation)=>{
                 resolve(presentation);
             }, (err)=>{
                 console.error("Error while creating the credaccess presentation:", err);

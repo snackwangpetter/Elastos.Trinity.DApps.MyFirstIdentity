@@ -31,11 +31,10 @@
       </ion-row>
 
       <p *ngIf="isEverythingReady()">All done! You now have a DID. When you better understand the advantages of DIDs later, you can export it and reuse it in other apps.</p>
+
+      <ion-button class="btn ion-activatable ripple" (click)="continueToOriginalLocation()">
+        Continue
+      </ion-button>
     </div>
-
-    <ion-button class="btn ion-activatable ripple" (click)="finalizeOriginalIntent()">
-      Debug: send credaccess response
-    </ion-button>
-
   </ion-grid>
 </ion-content>

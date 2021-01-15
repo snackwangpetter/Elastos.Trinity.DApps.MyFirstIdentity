@@ -1,5 +1,6 @@
 {
   "id": "org.elastos.trinity.dapp.myfirstidentity",
+  "did": "did:elastos:ibwPx9akaeiEE2U5z2pidPHmEjuoVkAQnk",
   "version": "0.0.1",
   "version_code": 1,
   "name": "My First Identity",

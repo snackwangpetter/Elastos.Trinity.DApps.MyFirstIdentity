@@ -7,19 +7,22 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { MyApp } from './app.component';
 
-import { HomePage } from './pages/home/home';
-
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { HttpClientModule } from '@angular/common/http';
 import { CredAccessPromptPage } from './pages/credaccessprompt/credaccessprompt';
 import { StorageService } from './services/storage.service';
+import { IdentitySetupPage } from './pages/identitysetup/identitysetup';
+import { CredAccessPage } from './pages/credaccess/credaccess';
+import { DeadEndPage } from './pages/deadend/deadend';
 
 @NgModule({
   declarations: [
     MyApp,
-    HomePage,
-    CredAccessPromptPage
+    IdentitySetupPage,
+    CredAccessPromptPage,
+    CredAccessPage,
+    DeadEndPage
   ],
   imports: [
     CommonModule,
@@ -31,8 +34,9 @@ import { StorageService } from './services/storage.service';
   bootstrap: [MyApp],
   entryComponents: [
     MyApp,
-    HomePage,
-    CredAccessPromptPage
+    IdentitySetupPage,
+    CredAccessPromptPage,
+    CredAccessPage
   ],
   providers: [
     StatusBar,

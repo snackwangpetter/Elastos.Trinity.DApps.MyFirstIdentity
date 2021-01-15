@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as TrinitySDK from '@elastosfoundation/trinity-dapp-sdk';
 import { DIDPublicationStatus } from '../model/didpublicationstatus.model';
+import { HiveCreationStatus } from '../model/hivecreationstatus.model';
 import { PersistentInfo } from '../model/persistentinfo.model';
 import { StorageService } from './storage.service';
 
@@ -29,7 +30,10 @@ export class PersistenceService {
                 publicationStatus: DIDPublicationStatus.PUBLICATION_NOT_REQUESTED,
                 assistPublicationID: null
             },
-            hive: {}
+            hive: {
+                vaultProviderAddress: null,
+                creationStatus: HiveCreationStatus.VAULT_NOT_CREATED
+            }
         }
     }
 
@@ -40,5 +44,9 @@ export class PersistenceService {
     public async savePersistentInfo(persistentInfo: PersistentInfo) {
         this.persistentInfo = persistentInfo;
         await this.storage.set("persistentinfo", JSON.stringify(this.persistentInfo));
+    }
+
+    public async reset() {
+        await this.savePersistentInfo(this.createNewPersistentInfo());
     }
 }

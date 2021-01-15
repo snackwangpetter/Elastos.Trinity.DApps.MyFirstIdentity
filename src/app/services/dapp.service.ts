@@ -6,6 +6,7 @@ import * as TrinitySDK from '@elastosfoundation/trinity-dapp-sdk';
 
 import { Router } from '@angular/router';
 import { StorageService } from './storage.service';
+import { IdentityService } from './identity.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let didManager: DIDPlugin.DIDManager;
@@ -19,7 +20,8 @@ export class DAppService {
 
     constructor(
         private navCtrl: NavController,
-        public zone: NgZone
+        public zone: NgZone,
+        private identityService: IdentityService
     ) {}
 
     public init(): Promise<any> {
@@ -35,13 +37,14 @@ export class DAppService {
                 else {
                     // Starting app as default UI: not handle - this application must always start with an intent.
                     console.error("Application started with default UI mode. This is not supported.");
+                    this.zone.run(()=>this.navCtrl.navigateRoot("deadend"));
                     resolve();
                 }
             })
         });
     }
 
-    private handleReceivedIntent(receivedIntent: AppManagerPlugin.ReceivedIntent) {
+    private async handleReceivedIntent(receivedIntent: AppManagerPlugin.ReceivedIntent) {
         this.receivedIntent = receivedIntent;
 
         console.log("Intent received:", receivedIntent);
@@ -51,19 +54,31 @@ export class DAppService {
             if (originalIntentAction.startsWith("https://did.elastos.net/credaccess")) {
                 // We need to ask user if he wants to sign in with elastOS or if he wants us to generate
                 // a temporary DID.
-                this.navCtrl.navigateRoot("credaccessprompt");
+                this.zone.run(()=>this.navCtrl.navigateRoot("credaccessprompt"));
+                ;
             }
             else {
                 console.error("Unhandled proxy intent received:", receivedIntent);
             }
         }
         else if (receivedIntent.action.startsWith("https://did.elastos.net/credaccess")) {
-            // Identity creation or management, followed by a real sign in (inside this app).
-            this.navCtrl.navigateRoot("home");
+            if (await this.identityService.identityIsFullyReadyToUse()) {
+                this.zone.run(()=>this.navCtrl.navigateRoot("credaccess"));
+            }
+            else {
+                // Identity creation or management, followed by a real sign in (inside this app).
+                this.zone.run(()=>this.navCtrl.navigateRoot("identitysetup"));
+            }
         }
     }
 
     public getReceivedIntent(): AppManagerPlugin.ReceivedIntent {
         return this.receivedIntent;
+    }
+
+    public sleep(ms: number): Promise<void> {
+        return new Promise((resolve)=>{
+            setTimeout(()=>resolve(), ms);
+        });
     }
 }
