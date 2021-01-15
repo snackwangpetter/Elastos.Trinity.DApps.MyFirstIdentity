@@ -7,10 +7,22 @@ import * as TrinitySDK from '@elastosfoundation/trinity-dapp-sdk';
 import { Router } from '@angular/router';
 import { StorageService } from './storage.service';
 import { IdentityService } from './identity.service';
+import { ThemeService } from './theme.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let didManager: DIDPlugin.DIDManager;
 declare let passwordManager: PasswordManagerPlugin.PasswordManager;
+
+enum MessageType {
+  INTERNAL = 1,
+  IN_RETURN = 2,
+  IN_REFRESH = 3,
+
+  EXTERNAL = 11,
+  EX_LAUNCHER = 12,
+  EX_INSTALL = 13,
+  EX_RETURN = 14,
+};
 
 @Injectable({
     providedIn: 'root'
@@ -21,11 +33,16 @@ export class DAppService {
     constructor(
         private navCtrl: NavController,
         public zone: NgZone,
-        private identityService: IdentityService
+        private identityService: IdentityService,
+        private theme: ThemeService
     ) {}
 
     public init(): Promise<any> {
         return new Promise((resolve)=>{
+            appManager.setListener((msg) => {
+              this.onMessageReceived(msg);
+            });
+
             appManager.getStartupMode((startupInfo)=>{
                 if (startupInfo.startupMode == AppManagerPlugin.StartupMode.INTENT) {
                     // Do nothing yet, the intent handle will navigate.
@@ -42,6 +59,27 @@ export class DAppService {
                 }
             })
         });
+    }
+
+    onMessageReceived(msg: AppManagerPlugin.ReceivedMessage) {
+      let params: any = msg.message;
+      if (typeof (params) == "string") {
+        try {
+            params = JSON.parse(params);
+        } catch (e) {
+            console.log('Params are not JSON format: ', params);
+        }
+      }
+      switch (msg.type) {
+        case MessageType.IN_REFRESH:
+          if(params.action === 'preferenceChanged' && params.data.key === "ui.darkmode") {
+            this.zone.run(() => {
+              console.log('Dark Mode toggled');
+              this.theme.setTheme(params.data.value);
+            });
+          }
+          break;
+      }
     }
 
     private async handleReceivedIntent(receivedIntent: AppManagerPlugin.ReceivedIntent) {

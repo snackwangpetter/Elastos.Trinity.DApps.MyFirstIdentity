@@ -6,6 +6,7 @@ import { DAppService } from 'src/app/services/dapp.service';
 import { HiveService } from 'src/app/services/hive.service';
 import { IdentityService } from 'src/app/services/identity.service';
 import { PersistenceService } from 'src/app/services/persistence.service';
+import { ThemeService } from 'src/app/services/theme.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -21,12 +22,14 @@ export class IdentitySetupPage {
     public dappService: DAppService,
     private identityService: IdentityService,
     private hiveService: HiveService,
-    private persistence: PersistenceService) {
+    private persistence: PersistenceService,
+    public theme: ThemeService
+  ) {
   }
 
   ionViewDidEnter() {
     appManager.setVisible("show");
-    titleBarManager.setTitle("Identity setup");
+    titleBarManager.setTitle("Identity Setup");
     titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
 
     if (!this.isEverythingReady() && this.wasTemporaryIdentityCreationStarted()) {

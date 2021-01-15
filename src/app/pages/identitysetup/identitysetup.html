@@ -1,4 +1,77 @@
 <ion-content class="ion-text-center">
+  <ion-slides *ngIf="!wasTemporaryIdentityCreationStarted()" pager="true">
+    <ion-slide>
+      <img [src]="!theme.darkMode ? 'assets/icons/did.svg' : 'assets/icons/darkmode/did.svg'">
+      <h1>Welcome to</h1>
+      <h2>My First Identity</h2>
+    </ion-slide>
+    <ion-slide>
+      <lottie-player src="assets/animations/fingerprint.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay loop></lottie-player>
+      <p>
+        This application uses decentralized identities (DIDs). With decentralized identities,
+        you own your identity, your data. <br><br> So it seems that you either don't know what this is yet,
+        or you have never created your own DID? We are here to help! The following steps will
+        automatically create and publish a brand new Elastos identity and storage space for you.
+      </p>
+    </ion-slide>
+    <ion-slide>
+        <lottie-player src="assets/animations/device.json" background="transparent" speed="1" style="width: 300px; height: 300px;" autoplay loop></lottie-player>
+      <p style="position: relative; top: -75px;">
+        In the future, if you want to better control or use this identity in other
+        DID-powered applications, you may export it to a third party wallet application such as elastOS.
+      </p>
+    </ion-slide>
+  </ion-slides>
+
+  <ion-grid *ngIf="wasTemporaryIdentityCreationStarted()" [class.dark-process-container]="theme.darkMode">
+    <ion-row class="steps-row">
+      <ion-col size="12">
+        <ion-label>
+          <h1>Step 1</h1>
+          <h2>Identity creation on the device</h2>
+        </ion-label>
+        <ion-icon *ngIf="isLocalDIDcreated()" class="done" name="checkmark-circle-outline"></ion-icon>
+        <ion-spinner *ngIf="!isLocalDIDcreated()"></ion-spinner>
+      </ion-col>
+    </ion-row>
+    <ion-row class="steps-row">
+      <ion-col size="12">
+        <ion-label>
+          <h1>Step 2</h1>
+          <h2>Identity creation on the device</h2>
+        </ion-label>
+        <ion-icon *ngIf="isDIDOnChain()" class="done" name="checkmark-circle-outline"></ion-icon>
+        <ion-icon *ngIf="!isDIDOnChain() && !isDIDBeingPublished()" class="pending" name="timer-outline"></ion-icon>
+        <ion-spinner *ngIf="!isDIDOnChain() && isDIDBeingPublished()"></ion-spinner>
+      </ion-col>
+    </ion-row>
+    <ion-row class="steps-row">
+      <ion-col size="12">
+        <ion-label>
+          <h1>Step 3</h1>
+          <h2>Personal Storage Configure</h2>
+        </ion-label>
+        <ion-icon *ngIf="isHiveVaultReady()" class="done" name="checkmark-circle-outline"></ion-icon>
+        <ion-icon *ngIf="!isHiveVaultReady()" class="pending" name="timer-outline"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <div *ngIf="isEverythingReady()" class="allDone-container">
+      <lottie-player src="assets/animations/checkmark.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay loop></lottie-player>
+      <p>All done, you now have a DID! When you better understand the advantages of DIDs later, you can export it and reuse it in other apps.</p>
+    </div>
+  </ion-grid>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <ion-button *ngIf="!wasTemporaryIdentityCreationStarted()" (click)="newDID()">
+    Create my Identity
+  </ion-button>
+  <ion-button *ngIf="isEverythingReady()" (click)="continueToOriginalLocation()">
+    Continue
+  </ion-button>
+</ion-footer>
+
+<!-- <ion-content class="ion-text-center">
   <ion-grid class="container">
 
     <div *ngIf="!wasTemporaryIdentityCreationStarted()">
@@ -37,4 +110,4 @@
       </ion-button>
     </div>
   </ion-grid>
-</ion-content>
+</ion-content> -->
