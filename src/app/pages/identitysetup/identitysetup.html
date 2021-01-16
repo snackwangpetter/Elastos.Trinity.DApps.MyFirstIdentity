@@ -28,7 +28,7 @@
       <ion-col size="12">
         <ion-label>
           <h1>Step 1</h1>
-          <h2>Identity creation on the device</h2>
+          <h2>Create Identity on the device</h2>
         </ion-label>
         <ion-icon *ngIf="isLocalDIDcreated()" class="done" name="checkmark-circle-outline"></ion-icon>
         <ion-spinner *ngIf="!isLocalDIDcreated()"></ion-spinner>
@@ -38,7 +38,7 @@
       <ion-col size="12">
         <ion-label>
           <h1>Step 2</h1>
-          <h2>Identity creation on the device</h2>
+          <h2>Publish your Identity on the decentralized registry</h2>
         </ion-label>
         <ion-icon *ngIf="isDIDOnChain()" class="done" name="checkmark-circle-outline"></ion-icon>
         <ion-icon *ngIf="!isDIDOnChain() && !isDIDBeingPublished()" class="pending" name="timer-outline"></ion-icon>
@@ -49,7 +49,7 @@
       <ion-col size="12">
         <ion-label>
           <h1>Step 3</h1>
-          <h2>Personal Storage Configure</h2>
+          <h2>Configure Personal Storage</h2>
         </ion-label>
         <ion-icon *ngIf="isHiveVaultReady()" class="done" name="checkmark-circle-outline"></ion-icon>
         <ion-icon *ngIf="!isHiveVaultReady()" class="pending" name="timer-outline"></ion-icon>
