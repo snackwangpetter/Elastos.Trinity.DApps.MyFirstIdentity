@@ -3,7 +3,7 @@ ion-slides {
 
   ion-slide {
     height: 100%;
-    padding: 30px;
+    padding: 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -37,7 +37,7 @@ ion-slides {
     }
 
     p {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 500;
     }
   }
@@ -45,11 +45,17 @@ ion-slides {
 
 ion-grid {
   height: 100%;
-  padding: 20px;
+  padding: 10px 20px;
+
+  ion-icon, ion-spinner {
+    width: 25px;
+    height: 25px;
+    color: #732dcf;
+  }
 
   .steps-row {
     border-radius: 17px;
-    padding: 12.5px 10px;
+    padding: 10px;
     margin-bottom: 7.5px;
     box-shadow: 0 3px 15px 0 #ededf0;
     background-color: #ffffff;
@@ -70,7 +76,7 @@ ion-grid {
         }
 
         h1 {
-          font-size: 15px;
+          font-size: 17px;
           font-weight: 600;
           letter-spacing: 0.7px;
           text-align: left;
@@ -79,14 +85,9 @@ ion-grid {
         h2 {
             font-size: 13px;
             font-weight: 500;
-            padding: 3px 0 0;
+            padding: 5px 0 0;
             text-align: left;
         }
-      }
-
-      ion-icon, ion-spinner {
-        width: 25px;
-        height: 25px;
       }
 
       .done {
@@ -100,7 +101,7 @@ ion-grid {
   }
 
   .allDone-container {
-    margin-top: 50px;
+    margin-top: 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -112,13 +113,6 @@ ion-grid {
       font-weight: 600;
     };
   }
-}
-
-ion-footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
 }
 
 .dark-process-container {

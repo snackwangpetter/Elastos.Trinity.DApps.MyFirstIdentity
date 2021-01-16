@@ -13,12 +13,12 @@
   "category": "tool",
   "icons": [
     {
-      "src": "assets/images/logo.png",
+      "src": "assets/images/app-logo.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "assets/images/logo.png",
+      "src": "assets/images/app-logo.png",
       "sizes": "128x128",
       "type": "image/png"
     }
