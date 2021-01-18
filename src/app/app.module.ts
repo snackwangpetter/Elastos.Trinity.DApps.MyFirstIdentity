@@ -15,6 +15,9 @@ import { StorageService } from './services/storage.service';
 import { IdentitySetupPage } from './pages/identitysetup/identitysetup';
 import { CredAccessPage } from './pages/credaccess/credaccess';
 import { DeadEndPage } from './pages/deadend/deadend';
+import { ManageIdentityPage } from './pages/manageidentity/manageidentity';
+import { ExportIdentityPage } from './pages/exportidentity/exportidentity';
+import { Clipboard } from '@ionic-native/clipboard/ngx';
 
 @NgModule({
   declarations: [
@@ -22,7 +25,9 @@ import { DeadEndPage } from './pages/deadend/deadend';
     IdentitySetupPage,
     CredAccessPromptPage,
     CredAccessPage,
-    DeadEndPage
+    DeadEndPage,
+    ManageIdentityPage,
+    ExportIdentityPage
   ],
   imports: [
     CommonModule,
@@ -36,12 +41,16 @@ import { DeadEndPage } from './pages/deadend/deadend';
     MyApp,
     IdentitySetupPage,
     CredAccessPromptPage,
-    CredAccessPage
+    CredAccessPage,
+    DeadEndPage,
+    ManageIdentityPage,
+    ExportIdentityPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     Platform,
+    Clipboard,
     StorageService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {provide: ErrorHandler, useClass: ErrorHandler}

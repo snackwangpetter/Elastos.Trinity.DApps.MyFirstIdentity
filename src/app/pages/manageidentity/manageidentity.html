@@ -1,0 +1,21 @@
+<ion-content class="ion-text-center">
+  <ion-grid class="container">
+    <h1>Identity management</h1>
+    <p>
+      You are currently using a <b>temporary identity</b>, bound only to this application. Besides, this identity has
+      currently not been saved and cannot be recovered if you reinstall the application, nor can it be shared
+      with other applications.
+    </p>
+    <p>
+      We recommend you to export your temporary identity to an external identity wallet such as elastOS (it has to
+      be installed on your device first).
+    </p>
+    <ion-button (click)="exportIdentity()">Export identity</ion-button>
+
+    <!--<p>After your identity is exported to elastOS, touch the button below to use elastOS instead of your
+      temporary identity. This change will apply next time you will sign in or your your identity or
+      storage space from the application.
+    </p>
+    <ion-button (click)="stopUsingTemporaryIdentity()">Deactivate temporary identity</ion-button>-->
+  </ion-grid>
+</ion-content>

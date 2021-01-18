@@ -31,7 +31,8 @@
   "default_locale": "en",
   "plugins": [
     "Device",
-    "NetworkStatus"
+    "NetworkStatus",
+    "Clipboard"
   ],
   "urls": [
     "https://wogbjv3ci3.execute-api.us-east-1.amazonaws.com/prod/*",
@@ -47,6 +48,9 @@
     },
     {
       "action": "https://did.elastos.net/credaccess"
+    },
+    {
+      "action": "https://myfirstidentity.elastos.net/manageidentity"
     }
   ],
   "background_color": "#4e8ef7",

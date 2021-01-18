@@ -54,12 +54,20 @@
           <h2>Configure Personal Storage</h2>
         </ion-label>
         <ion-icon *ngIf="isHiveVaultReady()" class="done" name="checkmark-circle-outline"></ion-icon>
-        <ion-icon *ngIf="!isHiveVaultReady()" class="pending" name="timer-outline"></ion-icon>
+        <ion-icon *ngIf="!isHiveVaultReady() && !isHiveBeingConfigured()" class="pending" name="timer-outline"></ion-icon>
+        <ion-spinner *ngIf="!isHiveVaultReady() && isHiveBeingConfigured()"></ion-spinner>
       </ion-col>
     </ion-row>
     <div *ngIf="isEverythingReady()" class="allDone-container">
       <lottie-player src="assets/animations/checkmark.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay loop></lottie-player>
       <p>All done, you now have a DID! When you better understand the advantages of DIDs later, you can export it and reuse it in other apps.</p>
+    </div>
+    <div *ngIf="suggestRestartingFromScratch">
+      <p>Sorry, it seems like something unexpected happened. The problem has been reported to the team but in the meantime,
+         would you like to restart the identity creation from the beginning?</p>
+      <ion-button (click)="restartProcessFromScratch()">
+       Restart
+      </ion-button>
     </div>
   </ion-grid>
 </ion-content>

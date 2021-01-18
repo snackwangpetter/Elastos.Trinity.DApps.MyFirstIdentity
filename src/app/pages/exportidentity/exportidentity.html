@@ -1,0 +1,27 @@
+<ion-content class="ion-text-center">
+  <ion-grid class="container">
+
+   <h1>Identity export</h1>
+   <p>
+     Write down the following mnemonic words on a paper, in the right order, and permanently save them. After that,
+     you can copy them here and paste them in the import identity flow of your favorite identity application
+     (ex: elastOS).
+   </p>
+   <ion-row>
+     <ion-col size="4">Your DID:</ion-col>
+     <ion-col size="8">{{ this.didString }}</ion-col>
+   </ion-row>
+   <ion-row>
+    <ion-col size="4">Your mnemonic words:</ion-col>
+    <ion-col size="8">*********</ion-col>
+  </ion-row>
+  <ion-button (click)="showMnemonic()">Show mnemonic</ion-button>
+  <ion-button (click)="copyDIDStringToClipboard()">Copy DID</ion-button>
+  <ion-button *ngIf="!mnemonicCopiedToClipboard" (click)="copyMnemonicToClipboard()">Copy mnemonic to clipboard</ion-button>
+  <p *ngIf="mnemonicCopiedToClipboard">
+    Your mnemonic words have been copied to your clipboard. Please save them safely. You can now open your third
+    party identity wallet application and import your identity using those words.
+  </p>
+
+  </ion-grid>
+</ion-content>

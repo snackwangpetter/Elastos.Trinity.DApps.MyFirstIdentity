@@ -38,22 +38,36 @@ export class DAppService {
     ) {}
 
     public init(): Promise<any> {
+        console.log("DApp service is initializing");
+
         return new Promise((resolve)=>{
             appManager.setListener((msg) => {
               this.onMessageReceived(msg);
             });
 
+            console.log("Getting startup info");
             appManager.getStartupMode((startupInfo)=>{
+                console.log("Starupt info:", startupInfo);
+
                 if (startupInfo.startupMode == AppManagerPlugin.StartupMode.INTENT) {
-                    // Do nothing yet, the intent handle will navigate.
-                    appManager.setIntentListener(receivedIntent => {
-                        this.handleReceivedIntent(receivedIntent);
+                    appManager.hasPendingIntent((hasIntent)=>{
+                        if (hasIntent) {
+                            // Do nothing yet, the intent handle will navigate.
+                            appManager.setIntentListener(receivedIntent => {
+                                this.handleReceivedIntent(receivedIntent);
+                            });
+                            resolve();
+                        }
+                        else {
+                            // Should not happen but helps for debugging: if start as intent mode but no pending intent
+                            // (ex: during ionic hot reload): go back to default ui screen
+                            this.zone.run(()=>this.navCtrl.navigateRoot("deadend"));
+                        }
                     });
-                    resolve();
                 }
                 else {
                     // Starting app as default UI: not handle - this application must always start with an intent.
-                    console.error("Application started with default UI mode. This is not supported.");
+                    console.warn("Application started with default UI mode. This is not supported.");
                     this.zone.run(()=>this.navCtrl.navigateRoot("deadend"));
                     resolve();
                 }
@@ -111,6 +125,9 @@ export class DAppService {
         else if (receivedIntent.action.startsWith("https://did.elastos.net/appidcredissue")) {
             let applicationDID = await this.getApplicationDID();
             await this.identityService.generateAndSendApplicationIDCredentialIntentResponse(applicationDID, receivedIntent);
+        }
+        else if (receivedIntent.action.startsWith("https://myfirstidentity.elastos.net/manageidentity")) {
+            this.zone.run(()=>this.navCtrl.navigateRoot("manageidentity"));
         }
         else {
             console.error("Unhandled intent!");

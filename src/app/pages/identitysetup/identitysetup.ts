@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { DIDPublicationStatus } from 'src/app/model/didpublicationstatus.model';
+import { HiveCreationStatus } from 'src/app/model/hivecreationstatus.model';
 import { PersistentInfo } from 'src/app/model/persistentinfo.model';
 import { DAppService } from 'src/app/services/dapp.service';
 import { HiveService } from 'src/app/services/hive.service';
@@ -17,13 +18,17 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['identitysetup.scss']
 })
 export class IdentitySetupPage {
+  public suggestRestartingFromScratch = false;
+  private hiveIsBeingConfigured = false;
+
   constructor(
     public navCtrl: NavController,
     public dappService: DAppService,
     private identityService: IdentityService,
     private hiveService: HiveService,
     private persistence: PersistenceService,
-    public theme: ThemeService
+    public theme: ThemeService,
+    private zone: NgZone
   ) {
   }
 
@@ -46,22 +51,36 @@ export class IdentitySetupPage {
    * Continues the identity creation process where it was stopped.
    */
   private async resumeIdentitySetupFlow() {
-    // Local DID creation
-    if (!this.isLocalDIDcreated()) {
-      await this.identityService.createLocalIdentity();
-    }
+    await new Promise((resolve)=>{
+      setTimeout(async ()=>{
+        try {
+          // Local DID creation
+          if (!this.isLocalDIDcreated()) {
+            await this.identityService.createLocalIdentity();
+          }
 
-    if (!this.isDIDOnChain() && !this.isDIDBeingPublished()) {
-      await this.identityService.publishIdentity();
-    }
+          if (!this.isDIDOnChain() && !this.isDIDBeingPublished()) {
+            await this.identityService.publishIdentity();
+          }
 
-    if (!this.isDIDOnChain() && this.isDIDBeingPublished()) {
-      await this.repeatinglyCheckAssistPublicationStatus();
-    }
+          if (!this.isDIDOnChain() && this.isDIDBeingPublished()) {
+            await this.repeatinglyCheckAssistPublicationStatus();
+          }
 
-    if (!this.isHiveVaultReady()) {
-      await this.prepareHiveVault();
-    }
+          if (!this.isHiveVaultReady()) {
+            await this.prepareHiveVault();
+          }
+        }
+        catch (e) {
+          // Catch all unhandled exceptions. When this happens, we:
+          // TODO 1) send a silent sentry report to be able to understand what's going on remotely
+          // 2) suggest user to restart the process fresh, as something is broken.
+          console.warn("Handled global exception:", e);
+          this.zone.run(()=>this.suggestRestartingFromScratch = true);
+          resolve();
+        }
+      }, 1000);
+    });
   }
 
   public wasTemporaryIdentityCreationStarted(): boolean {
@@ -84,7 +103,12 @@ export class IdentitySetupPage {
   }
 
   public isHiveVaultReady(): boolean {
-    return false; // TODO
+    let persistenceInfo = this.persistence.getPersistentInfo();
+    return persistenceInfo.hive.creationStatus == HiveCreationStatus.VAULT_CREATED_AND_VERIFIED;
+  }
+
+  public isHiveBeingConfigured(): boolean {
+    return this.hiveIsBeingConfigured;
   }
 
   public isEverythingReady(): boolean {
@@ -92,7 +116,15 @@ export class IdentitySetupPage {
   }
 
   private async prepareHiveVault() {
-    await this.hiveService.prepareHiveVault();
+    this.hiveIsBeingConfigured = true;
+    try {
+      await this.hiveService.prepareHiveVault();
+    }
+    catch (e) {
+      throw e;
+    } finally {
+      this.hiveIsBeingConfigured = false;
+    }
   }
 
   /**
@@ -126,5 +158,14 @@ export class IdentitySetupPage {
   public continueToOriginalLocation() {
     // NOTE: For now, we always consider we are coming from a "credaccess" intent request. To be improved later.
     this.navCtrl.navigateRoot("credaccess");
+  }
+
+  /**
+   * Clears all context and restarts identity creation from 0.
+   */
+  public async restartProcessFromScratch() {
+    this.suggestRestartingFromScratch = false;
+    await this.identityService.resetOnGoingProcess();
+    this.resumeIdentitySetupFlow();
   }
 }

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HiveService } from 'src/app/services/hive.service';
+import { IdentityService } from 'src/app/services/identity.service';
 import { PersistenceService } from 'src/app/services/persistence.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
@@ -11,7 +12,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['deadend.scss']
 })
 export class DeadEndPage {
-  constructor(private hiveService: HiveService, private persistence: PersistenceService) {}
+  constructor(private hiveService: HiveService, private persistence: PersistenceService, private identityService: IdentityService) {}
 
   ionViewDidEnter() {
     appManager.setVisible("show");
@@ -20,12 +21,7 @@ export class DeadEndPage {
   }
 
   public async debugRevokeHiveAuth() {
-    let vault = await this.hiveService.getUserVault();
-    vault.revokeAccessToken();
-
-    appManager.setSetting("dappsdk_appinstancedidstoreid", null);
-    appManager.setSetting("dappsdk_appinstancedidstring", null);
-    appManager.setSetting("dappsdk_appinstancedidstorepassword", null);
+    this.identityService.resetOnGoingProcess();
   }
 
   public async debugCallVaultAPI() {

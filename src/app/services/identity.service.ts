@@ -108,6 +108,16 @@ export class IdentityService {
         return await this.didHelper.loadDID(didStore, persistentInfo.did.didString);
     }
 
+    public async getDIDMnemonic(): Promise<string> {
+        let persistentInfo = this.persistence.getPersistentInfo();
+        let didStore = await this.didHelper.openDidStore(persistentInfo.did.storeId);
+        return await new Promise((resolve)=>{
+            didStore.exportMnemonic(persistentInfo.did.storePassword, (mnemonic)=>{
+                resolve(mnemonic);
+            }, (e)=> resolve(""));
+        });
+    }
+
     /**
      * Queries the DID sidechain to check if the given DID is published or not.
      */
@@ -282,7 +292,22 @@ export class IdentityService {
     /**
      * Resets the whole process as if we were at the beginning.
      */
-    private async resetOnGoingProcess() {
+    public async resetOnGoingProcess() {
+        try {
+            // Reset hive authentication
+            let vault = await this.hiveService.getUserVault();
+            vault.revokeAccessToken();
+        }
+        catch (e) {
+            // Failing? We try to not mind, we continue because we cannot recover a from a recovery...
+        }
+
+        // Delete app instance DID information
+        appManager.setSetting("dappsdk_appinstancedidstoreid", null);
+        appManager.setSetting("dappsdk_appinstancedidstring", null);
+        appManager.setSetting("dappsdk_appinstancedidstorepassword", null);
+
+        // Clear identity creation flow status
         await this.persistence.reset();
     }
 
