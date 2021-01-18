@@ -38,7 +38,7 @@ export class CredAccessPromptPage {
    */
   createIdentity() {
     let responseParams = {
-      action: "dapp"
+      action: "internal"
     };
     appManager.sendIntentResponse(null, responseParams, this.dappService.getReceivedIntent().intentId, ()=>{
       console.log("Proxy intent response sent, original request:", this.dappService.getReceivedIntent(), "Response params:", responseParams);
