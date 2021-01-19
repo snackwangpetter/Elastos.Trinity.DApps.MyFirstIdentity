@@ -138,41 +138,47 @@ export class IdentityService {
         console.log("Starting the DID publication process");
 
         return new Promise(async (resolve, reject)=>{
-            let persistentInfo = this.persistence.getPersistentInfo();
+            try {
+                let persistentInfo = this.persistence.getPersistentInfo();
 
-            let didStore = await this.openDidStore(persistentInfo.did.storeId, async (payload: string, memo: string)=>{
-                // Callback called by the DID SDK when trying to publish a DID.
-                console.log("Create ID transaction callback is being called", payload, memo);
-                let payloadAsJson = JSON.parse(payload);
-                try {
-                    await this.publishDIDOnAssist(persistentInfo.did.didString, payloadAsJson, memo);
-                    resolve();
-                }
-                catch (err) {
+                let didStore = await this.openDidStore(persistentInfo.did.storeId, async (payload: string, memo: string)=>{
+                    // Callback called by the DID SDK when trying to publish a DID.
+                    console.log("Create ID transaction callback is being called", payload, memo);
+                    let payloadAsJson = JSON.parse(payload);
+                    try {
+                        await this.publishDIDOnAssist(persistentInfo.did.didString, payloadAsJson, memo);
+                        resolve();
+                    }
+                    catch (err) {
+                        reject(err);
+                    }
+                });
+
+                let localDIDDocument = await this.loadLocalDIDDocument(didStore, persistentInfo.did.didString);
+
+                // Hive support: we directly automatically select a random hive node and define it as a service in the
+                // DID document, before we publish at first. Because we don't want to publish the DID 2 times.
+                await this.addRandomHiveToDIDDocument(localDIDDocument, persistentInfo.did.storePassword);
+
+                // Start the publication flow
+                localDIDDocument.publish(persistentInfo.did.storePassword, ()=>{}, (err)=>{
+                    // Local "publish" process errored
+                    console.log("Local DID Document publish(): error", err);
                     reject(err);
-                }
-            });
-
-            let localDIDDocument = await this.loadLocalDIDDocument(didStore, persistentInfo.did.didString);
-
-            // Hive support: we directly automatically select a random hive node and define it as a service in the
-            // DID document, before we publish at first. Because we don't want to publish the DID 2 times.
-            await this.addRandomHiveToDIDDocument(localDIDDocument, persistentInfo.did.storePassword);
-
-            // Start the publication flow
-            localDIDDocument.publish(persistentInfo.did.storePassword, ()=>{}, (err)=>{
-                // Local "publish" process errored
-                console.log("Local DID Document publish(): error", err);
-                reject(err);
-            });
+                });
+            }
+            catch (e) {
+                reject(e);
+            }
         });
     }
 
     private addRandomHiveToDIDDocument(localDIDDocument: DIDPlugin.DIDDocument, storePassword: string): Promise<void> {
-        return new Promise((resolve, reject)=>{
+        return new Promise(async (resolve, reject)=>{
             let randomHideNodeAddress = this.hiveService.getRandomQuickStartHiveNodeAddress();
             if (randomHideNodeAddress) {
                 let service = didManager.ServiceBuilder.createService('#hivevault', 'HiveVault', randomHideNodeAddress);
+                await this.removeHiveVaultServiceFromDIDDocument(localDIDDocument, storePassword);
                 localDIDDocument.addService(service, storePassword, async ()=>{
                     // Save this hive address to persistence for later use
                     let persistentInfo = this.persistence.getPersistentInfo();
@@ -187,6 +193,17 @@ export class IdentityService {
             else {
                 reject("Hive node address cannot be null");
             }
+        });
+    }
+
+    private removeHiveVaultServiceFromDIDDocument(localDIDDocument: DIDPlugin.DIDDocument, storePassword: string): Promise<void> {
+        return new Promise((resolve)=>{
+            localDIDDocument.removeService("#hivevault", storePassword, ()=>{
+                resolve();
+            }, (err)=>{
+                // Resolve normally in case of error, as this may be a "service does not exist" error which is fine.
+                resolve();
+            });
         });
     }
 
