@@ -47,7 +47,7 @@ export class DAppService {
 
             console.log("Getting startup info");
             appManager.getStartupMode((startupInfo)=>{
-                console.log("Starupt info:", startupInfo);
+                console.log("Startup info:", startupInfo);
 
                 if (startupInfo.startupMode == AppManagerPlugin.StartupMode.INTENT) {
                     appManager.hasPendingIntent((hasIntent)=>{
