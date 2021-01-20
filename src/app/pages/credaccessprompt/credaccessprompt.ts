@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { DAppService } from 'src/app/services/dapp.service';
+import { IdentityService } from 'src/app/services/identity.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -11,7 +12,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['credaccessprompt.scss']
 })
 export class CredAccessPromptPage {
-  constructor(public navCtrl: NavController, public dappService: DAppService) {
+  constructor(public navCtrl: NavController, public dappService: DAppService, private identityService: IdentityService) {
   }
 
   ionViewDidEnter() {
@@ -20,7 +21,9 @@ export class CredAccessPromptPage {
     titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
   }
 
-  elastOSSignIn() {
+  async elastOSSignIn() {
+    await this.identityService.saveUsingExternalIdentityWalletPreference();
+
     let responseParams = {
       action: "external"
     };
@@ -36,7 +39,9 @@ export class CredAccessPromptPage {
    * runtime, and the runtime is going to launch this identity app in a normal way with credaccess.
    * At that time, we will create the identity.
    */
-  createIdentity() {
+  async useTemporaryIdentity() {
+    await this.identityService.saveUsingBuiltInIdentityWalletPreference();
+
     let responseParams = {
       action: "internal"
     };

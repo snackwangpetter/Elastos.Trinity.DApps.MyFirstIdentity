@@ -111,10 +111,10 @@ export class IdentityService {
     public async getDIDMnemonic(): Promise<string> {
         let persistentInfo = this.persistence.getPersistentInfo();
         let didStore = await this.didHelper.openDidStore(persistentInfo.did.storeId);
-        return await new Promise((resolve)=>{
-            didStore.exportMnemonic(persistentInfo.did.storePassword, (mnemonic)=>{
+        return await new Promise((resolve) => {
+            didStore.exportMnemonic(persistentInfo.did.storePassword, (mnemonic) => {
                 resolve(mnemonic);
-            }, (e)=> resolve(""));
+            }, (e) => resolve(""));
         });
     }
 
@@ -122,10 +122,10 @@ export class IdentityService {
      * Queries the DID sidechain to check if the given DID is published or not.
      */
     public async getIdentityOnChain(didString: string): Promise<DIDPlugin.DIDDocument> {
-        return new Promise((resolve, reject)=>{
-            didManager.resolveDidDocument(didString, true, (document)=>{
+        return new Promise((resolve, reject) => {
+            didManager.resolveDidDocument(didString, true, (document) => {
                 resolve(document);
-            }, (err)=>{
+            }, (err) => {
                 reject(err);
             });
         });
@@ -137,11 +137,11 @@ export class IdentityService {
     public async publishIdentity(): Promise<void> {
         console.log("Starting the DID publication process");
 
-        return new Promise(async (resolve, reject)=>{
+        return new Promise(async (resolve, reject) => {
             try {
                 let persistentInfo = this.persistence.getPersistentInfo();
 
-                let didStore = await this.openDidStore(persistentInfo.did.storeId, async (payload: string, memo: string)=>{
+                let didStore = await this.openDidStore(persistentInfo.did.storeId, async (payload: string, memo: string) => {
                     // Callback called by the DID SDK when trying to publish a DID.
                     console.log("Create ID transaction callback is being called", payload, memo);
                     let payloadAsJson = JSON.parse(payload);
@@ -161,7 +161,7 @@ export class IdentityService {
                 await this.addRandomHiveToDIDDocument(localDIDDocument, persistentInfo.did.storePassword);
 
                 // Start the publication flow
-                localDIDDocument.publish(persistentInfo.did.storePassword, ()=>{}, (err)=>{
+                localDIDDocument.publish(persistentInfo.did.storePassword, () => { }, (err) => {
                     // Local "publish" process errored
                     console.log("Local DID Document publish(): error", err);
                     reject(err);
@@ -174,19 +174,19 @@ export class IdentityService {
     }
 
     private addRandomHiveToDIDDocument(localDIDDocument: DIDPlugin.DIDDocument, storePassword: string): Promise<void> {
-        return new Promise(async (resolve, reject)=>{
+        return new Promise(async (resolve, reject) => {
             let randomHideNodeAddress = this.hiveService.getRandomQuickStartHiveNodeAddress();
             if (randomHideNodeAddress) {
                 let service = didManager.ServiceBuilder.createService('#hivevault', 'HiveVault', randomHideNodeAddress);
                 await this.removeHiveVaultServiceFromDIDDocument(localDIDDocument, storePassword);
-                localDIDDocument.addService(service, storePassword, async ()=>{
+                localDIDDocument.addService(service, storePassword, async () => {
                     // Save this hive address to persistence for later use
                     let persistentInfo = this.persistence.getPersistentInfo();
                     persistentInfo.hive.vaultProviderAddress = randomHideNodeAddress;
                     await this.persistence.savePersistentInfo(persistentInfo);
 
                     resolve();
-                }, (err)=>{
+                }, (err) => {
                     reject(err);
                 });
             }
@@ -197,10 +197,10 @@ export class IdentityService {
     }
 
     private removeHiveVaultServiceFromDIDDocument(localDIDDocument: DIDPlugin.DIDDocument, storePassword: string): Promise<void> {
-        return new Promise((resolve)=>{
-            localDIDDocument.removeService("#hivevault", storePassword, ()=>{
+        return new Promise((resolve) => {
+            localDIDDocument.removeService("#hivevault", storePassword, () => {
                 resolve();
-            }, (err)=>{
+            }, (err) => {
                 // Resolve normally in case of error, as this may be a "service does not exist" error which is fine.
                 resolve();
             });
@@ -209,7 +209,7 @@ export class IdentityService {
 
     // DOC FOR ASSIST API: https://github.com/tuum-tech/assist-restapi-backend#verify
     private publishDIDOnAssist(didString: string, payloadObject: any, memo: string) {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             console.log("Requesting identity publication to Assist");
 
             let assistAPIKey = "IdSFtQosmCwCB9NOLltkZrFy5VqtQn8QbxBKQoHPw7zp3w0hDOyOYjgL53DO3MDH";
@@ -228,7 +228,7 @@ export class IdentityService {
                 "Authorization": assistAPIKey
             });
 
-            this.http.post(assistAPIEndpoint+"/v1/didtx/create", requestBody, {
+            this.http.post(assistAPIEndpoint + "/v1/didtx/create", requestBody, {
                 headers: headers
             }).toPromise().then(async (response: AssistCreateTxResponse) => {
                 console.log("Assist successful response:", response);
@@ -256,17 +256,17 @@ export class IdentityService {
      * Checks the publication status on the assist API, for a previously saved ID.
      */
     public async checkPublicationStatusAndUpdate(): Promise<void> {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             let persistentInfo = this.persistence.getPersistentInfo();
 
-            console.log("Requesting identity publication status to Assist for confirmation ID "+persistentInfo.did.assistPublicationID);
+            console.log("Requesting identity publication status to Assist for confirmation ID " + persistentInfo.did.assistPublicationID);
 
             let headers = new HttpHeaders({
                 "Content-Type": "application/json",
                 "Authorization": assistAPIKey
             });
 
-            this.http.get(assistAPIEndpoint+"/v1/didtx/confirmation_id/"+persistentInfo.did.assistPublicationID, {
+            this.http.get(assistAPIEndpoint + "/v1/didtx/confirmation_id/" + persistentInfo.did.assistPublicationID, {
                 headers: headers
             }).toPromise().then(async (response: AssistTransactionStatusResponse) => {
                 console.log("Assist successful response:", response);
@@ -329,35 +329,35 @@ export class IdentityService {
     }
 
     private openDidStore(storeId: string, createIdTransactionCallback: DIDPlugin.OnCreateIdTransaction): Promise<DIDPlugin.DIDStore> {
-        return new Promise((resolve)=>{
-            didManager.initDidStore(storeId, createIdTransactionCallback, (didstore)=>{
+        return new Promise((resolve) => {
+            didManager.initDidStore(storeId, createIdTransactionCallback, (didstore) => {
                 resolve(didstore);
-            }, (err)=>{
+            }, (err) => {
                 resolve(null);
-            })
+            });
         });
     }
 
     private loadLocalDIDDocument(didStore: DIDPlugin.DIDStore, didString: string): Promise<DIDPlugin.DIDDocument> {
-        return new Promise((resolve)=>{
-            didStore.loadDidDocument(didString, (didDocument)=>{
+        return new Promise((resolve) => {
+            didStore.loadDidDocument(didString, (didDocument) => {
                 resolve(didDocument);
-            }, (err)=>{
+            }, (err) => {
                 resolve(null);
             });
         });
     }
 
     public createCredaccessPresentation(credentials: DIDPlugin.VerifiableCredential[]): Promise<DIDPlugin.VerifiablePresentation> {
-        return new Promise(async (resolve)=>{
+        return new Promise(async (resolve) => {
             let persistentInfo = this.persistence.getPersistentInfo();
             let didStore = await this.didHelper.openDidStore(persistentInfo.did.storeId);
             let did = await this.didHelper.loadDID(didStore, persistentInfo.did.didString);
 
             // TODO: embed the "name" credential when we have this configuration available on the UI.
-            did.createVerifiablePresentation(credentials, "none", "none", persistentInfo.did.storePassword, (presentation)=>{
+            did.createVerifiablePresentation(credentials, "none", "none", persistentInfo.did.storePassword, (presentation) => {
                 resolve(presentation);
-            }, (err)=>{
+            }, (err) => {
                 console.error("Error while creating the credaccess presentation:", err);
                 resolve(null);
             });
@@ -371,11 +371,11 @@ export class IdentityService {
         let persistentInfo = this.persistence.getPersistentInfo();
 
         console.log("Generating appid credential");
-        console.log("User DID:",persistentInfo.did.didString);
+        console.log("User DID:", persistentInfo.did.didString);
 
         let properties = {
-          appInstanceDid: intent.params.appinstancedid,
-          appDid: mainNativeApplicationDID,
+            appInstanceDid: intent.params.appinstancedid,
+            appDid: mainNativeApplicationDID,
         };
 
         console.log("Properties:", properties);
@@ -389,13 +389,49 @@ export class IdentityService {
             properties,
             persistentInfo.did.storePassword,
             async (issuedCredential) => {
-              console.log("Sending appidcredissue intent response for intent id " + intent.intentId);
-              let credentialAsString = await issuedCredential.toString();
-              await appManager.sendIntentResponse(null, {
-                credential: credentialAsString
-              }, intent.intentId);
+                console.log("Sending appidcredissue intent response for intent id " + intent.intentId);
+                let credentialAsString = await issuedCredential.toString();
+                await appManager.sendIntentResponse(null, {
+                    credential: credentialAsString
+                }, intent.intentId);
             }, async (err) => {
-              console.error("Failed to issue the app id credential...", err);
+                console.error("Failed to issue the app id credential...", err);
             });
-      }
+    }
+
+    /**
+     * Save in global preferences that the user has chosen to use the external identity wallet app (elastOS)
+     * to handle special intents. This information is used for example by the native title bar to know if a
+     * "manage account" icon should be displayed or not.
+     */
+    public async saveUsingExternalIdentityWalletPreference(): Promise<void> {
+        return new Promise((resolve) => {
+            appManager.setPreference("internalidentity.inuse", false, () => {
+                resolve();
+            }, (err) => {
+                // Maybe no permission to call setPreference if developping this app inside elastOS. that's ok,
+                // just forget it and resolve.
+                console.warn(err);
+                resolve();
+            });
+        });
+    }
+
+    /**
+     * Save in global preferences that the user has chosen to use the built-in identity wallet app (this app)
+     * to handle special intents. This information is used for example by the native title bar to know if a
+     * "manage account" icon should be displayed or not.
+     */
+    public async saveUsingBuiltInIdentityWalletPreference(): Promise<void> {
+        return new Promise((resolve) => {
+            appManager.setPreference("internalidentity.inuse", true, () => {
+                resolve();
+            }, (err) => {
+                // Maybe no permission to call setPreference if developping this app inside elastOS. that's ok,
+                // just forget it and resolve.
+                console.warn(err);
+                resolve();
+            });
+        });
+    }
 }
