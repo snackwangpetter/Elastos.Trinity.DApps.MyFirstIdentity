@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { DAppService } from 'src/app/services/dapp.service';
 import { IdentityService } from 'src/app/services/identity.service';
+import { ThemeService } from 'src/app/services/theme.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -12,7 +13,12 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['credaccessprompt.scss']
 })
 export class CredAccessPromptPage {
-  constructor(public navCtrl: NavController, public dappService: DAppService, private identityService: IdentityService) {
+  constructor(
+    public navCtrl: NavController,
+    public dappService: DAppService,
+    private identityService: IdentityService,
+    public theme: ThemeService
+  ) {
   }
 
   ionViewDidEnter() {

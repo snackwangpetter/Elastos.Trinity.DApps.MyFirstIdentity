@@ -6,10 +6,39 @@
   justify-content: center;
   align-items: center;
 
+  img {
+    width: 100px;
+    height: 100px;
+    animation: imgAnimate;
+    animation-duration: 1000ms;
+    animation-fill-mode: forwards;
+
+
+    @keyframes imgAnimate {
+      0% { width: 0px; height: 0px; }
+      100% { width: 100px; height: 100px; }
+    }
+  }
+
   h1 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+
+  h2 {
     font-size: 25px;
     font-weight: 700;
     letter-spacing: -0.43px;
-    margin: 0 0 10px;
+    margin: 0;
   }
+}
+
+ion-footer {
+  p {
+    padding: 0px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+  };
 }

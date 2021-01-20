@@ -68,8 +68,8 @@ export class DAppService {
                 else {
                     // Starting app as default UI: not handle - this application must always start with an intent.
                     console.warn("Application started with default UI mode. This is not supported.");
-                    this.zone.run(()=>this.navCtrl.navigateRoot("deadend"));
-                    //this.zone.run(()=>this.navCtrl.navigateRoot("identitysetup"));
+                    // this.zone.run(()=>this.navCtrl.navigateRoot("deadend"));
+                    this.zone.run(()=>this.navCtrl.navigateRoot("credaccessprompt"));
                     resolve();
                 }
             })
