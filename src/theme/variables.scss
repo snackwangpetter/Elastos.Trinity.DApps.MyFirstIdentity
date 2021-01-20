@@ -3,12 +3,12 @@
 
 /** Ionic CSS Variables **/
 :root {
-  --ion-color-primary: linear-gradient(120deg, #181d20 0%,  #21313d 100%);
-  --ion-color-primary-rgb: 33,49,61;
+  --ion-color-primary: linear-gradient(to bottom, #732dcf, #640fd4);
+  --ion-color-primary-rgb: 115,45,207;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255,255,255;
-  --ion-color-primary-shade: #1d2b36;
-  --ion-color-primary-tint: #374650;
+  --ion-color-primary-shade: #6528b6;
+  --ion-color-primary-tint: #8142d4;
 
   --ion-color-secondary: #ffffff;
   --ion-color-secondary-rgb: 255,255,255;
@@ -90,10 +90,19 @@
 
   --ion-item-background: #191a2f;
   --ion-item-background-activated: #262641;
+
+  p {
+    color: #ffffff;
+  }
+}
+
+div {
+  width: 100%;
 }
 
 ion-footer {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 15px 10px;
@@ -108,5 +117,13 @@ ion-button {
   font-weight: 500;
 }
 
-
-
+.fullscreen {
+  .modal-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+  }
+}

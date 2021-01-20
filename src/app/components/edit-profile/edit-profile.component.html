@@ -1,0 +1,10 @@
+<ion-grid class="container" [class.dark-container]="theme.darkMode">
+  <ion-input clearInput placeholder="Enter Name" [(ngModel)]="name"></ion-input>
+  <ion-input clearInput placeholder="Enter Email" type="email" [(ngModel)]="email"></ion-input>
+</ion-grid>
+
+<ion-footer class="ion-no-border">
+  <ion-button (click)="continue()">
+    Continue
+  </ion-button>
+</ion-footer>

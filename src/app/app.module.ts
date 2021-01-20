@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 import { AppRoutingModule } from './app-routing.module';
+import { IonicStorageModule } from '@ionic/storage';
 
 import { MyApp } from './app.component';
 
@@ -18,6 +19,9 @@ import { DeadEndPage } from './pages/deadend/deadend';
 import { ManageIdentityPage } from './pages/manageidentity/manageidentity';
 import { ExportIdentityPage } from './pages/exportidentity/exportidentity';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { EditprofilePage } from './pages/editprofile/editprofile.page';
+import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -27,14 +31,18 @@ import { Clipboard } from '@ionic-native/clipboard/ngx';
     CredAccessPage,
     DeadEndPage,
     ManageIdentityPage,
-    ExportIdentityPage
+    ExportIdentityPage,
+    EditprofilePage,
+    EditProfileComponent
   ],
   imports: [
     CommonModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    IonicModule.forRoot()
+    FormsModule,
+    IonicModule.forRoot(),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [MyApp],
   entryComponents: [
@@ -44,7 +52,9 @@ import { Clipboard } from '@ionic-native/clipboard/ngx';
     CredAccessPage,
     DeadEndPage,
     ManageIdentityPage,
-    ExportIdentityPage
+    ExportIdentityPage,
+    EditprofilePage,
+    EditProfileComponent
   ],
   providers: [
     StatusBar,
@@ -53,7 +63,7 @@ import { Clipboard } from '@ionic-native/clipboard/ngx';
     Clipboard,
     StorageService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    {provide: ErrorHandler, useClass: ErrorHandler}
+    { provide: ErrorHandler, useClass: ErrorHandler}
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

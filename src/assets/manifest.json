@@ -1,8 +1,8 @@
 {
   "id": "org.elastos.trinity.dapp.myfirstidentity",
   "did": "did:elastos:ibwPx9akaeiEE2U5z2pidPHmEjuoVkAQnk",
-  "version": "0.0.1",
-  "version_code": 1,
+  "version": "0.0.2",
+  "version_code": 2,
   "name": "My First Identity",
   "short_name": "My First Identity",
   "short_description": "Eases onboarding of new users with a temporary DID",

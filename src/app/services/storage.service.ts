@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Storage } from '@ionic/storage';
 
 declare let appManager: AppManagerPlugin.AppManager;
 
@@ -8,7 +9,9 @@ declare let appManager: AppManagerPlugin.AppManager;
  */
 @Injectable()
 export class StorageService {
-    constructor() { }
+    constructor(
+      private storage: Storage
+    ) { }
 
     public set(key: string, value: any): Promise<any> {
         return new Promise((resolve)=>{
@@ -18,7 +21,7 @@ export class StorageService {
         });
     }
 
-    public async get<T>(key: string): Promise<T> {
+    public async get(key: string): Promise<any> {
         return new Promise((resolve)=>{
             appManager.getSetting(key, (val)=>{
                 resolve(val);
@@ -27,6 +30,17 @@ export class StorageService {
                 resolve(null);
             });
         });
+    }
+
+    public setProfile(value: any) {
+      return this.storage.set("profile", JSON.stringify(value)).then((data) => {
+      });
+    }
+
+    public getProfile(): Promise<any> {
+      return this.storage.get("profile").then((data) => {
+        return JSON.parse(data);
+      });
     }
 }
 

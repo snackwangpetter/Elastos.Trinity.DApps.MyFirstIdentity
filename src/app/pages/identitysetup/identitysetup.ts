@@ -1,5 +1,5 @@
-import { Component, NgZone } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { Component, NgZone, ViewChild } from '@angular/core';
+import { NavController, IonSlides, ModalController } from '@ionic/angular';
 import { DIDPublicationStatus } from 'src/app/model/didpublicationstatus.model';
 import { HiveCreationStatus } from 'src/app/model/hivecreationstatus.model';
 import { PersistentInfo } from 'src/app/model/persistentinfo.model';
@@ -8,6 +8,7 @@ import { HiveService } from 'src/app/services/hive.service';
 import { IdentityService } from 'src/app/services/identity.service';
 import { PersistenceService } from 'src/app/services/persistence.service';
 import { ThemeService } from 'src/app/services/theme.service';
+import { EditProfileComponent } from 'src/app/components/edit-profile/edit-profile.component';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -18,6 +19,10 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['identitysetup.scss']
 })
 export class IdentitySetupPage {
+
+  @ViewChild('slider', {static: false}) slider: IonSlides;
+
+  public slideIndex = 0;
   public suggestRestartingFromScratch = false;
   private hiveIsBeingConfigured = false;
 
@@ -28,7 +33,8 @@ export class IdentitySetupPage {
     private hiveService: HiveService,
     private persistence: PersistenceService,
     public theme: ThemeService,
-    private zone: NgZone
+    private zone: NgZone,
+    private modalCtrl: ModalController
   ) {
   }
 
@@ -43,8 +49,31 @@ export class IdentitySetupPage {
     }
   }
 
+  slideNext() {
+    this.slider.slideNext();
+  }
+
+  async getActiveSlide() {
+    this.slideIndex = await this.slider.getActiveIndex();
+  }
+
   async newDID() {
     await this.resumeIdentitySetupFlow();
+  }
+
+  async addDIDInfo() {
+    const modal = await this.modalCtrl.create({
+      component: EditProfileComponent,
+      cssClass: 'fullscreen'
+    });
+    modal.onDidDismiss().then((params) => {
+      if(params.data) {
+        if(params.data.profileFilled) {
+          this.newDID();
+        }
+      }
+    });
+    await modal.present()
   }
 
   /**

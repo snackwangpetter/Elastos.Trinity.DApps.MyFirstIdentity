@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
-import { DIDPublicationStatus } from 'src/app/model/didpublicationstatus.model';
-import { PersistentInfo } from 'src/app/model/persistentinfo.model';
 import { DAppService } from 'src/app/services/dapp.service';
 import { HiveService } from 'src/app/services/hive.service';
 import { IdentityService } from 'src/app/services/identity.service';
 import { PersistenceService } from 'src/app/services/persistence.service';
+import { StorageService } from 'src/app/services/storage.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -21,7 +20,9 @@ export class CredAccessPage {
     public dappService: DAppService,
     private identityService: IdentityService,
     private hiveService: HiveService,
-    private persistence: PersistenceService) {
+    private persistence: PersistenceService,
+    private storage: StorageService
+  ) {
   }
 
   ionViewDidEnter() {
@@ -40,6 +41,7 @@ export class CredAccessPage {
     let presentationJson = await presentation.toJson();
 
     // We send the presentaiton directly here, no JWT, because we know we remain inside the same native package.
+
     let responseParams = {
       did: persistenceInfo.did.didString,
       presentation: JSON.parse(presentationJson)
@@ -72,16 +74,21 @@ export class CredAccessPage {
   }
 
   private async createCredential(claimName: string, storePassword: string): Promise<DIDPlugin.VerifiableCredential> {
-    let did = await this.identityService.getLocalDID();
+    const did = await this.identityService.getLocalDID();
+    const localProfile = await this.storage.get('profile');
+    console.log('Local profile', localProfile);
+
+    const localName = localProfile.name || null;
+    const localEmail = localProfile.email || null;
 
     // Handle a few standard claims nicely. Others default to a default value.
     let properties: any = {};
     switch (claimName) {
       case "name":
-        properties.name = "Anonymous user";
+        properties.name = localName ? localName : "Anonymous user";
         break;
       case "email":
-        properties.email = "unknown@email.com";
+        properties.email = localEmail ? localEmail : "unknown@email.com";
       default:
         // Empty properties
     }

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { HiveService } from 'src/app/services/hive.service';
 import { IdentityService } from 'src/app/services/identity.service';
 import { PersistenceService } from 'src/app/services/persistence.service';
+import { StorageService } from 'src/app/services/storage.service';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -12,12 +13,22 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
   styleUrls: ['deadend.scss']
 })
 export class DeadEndPage {
-  constructor(private hiveService: HiveService, private persistence: PersistenceService, private identityService: IdentityService) {}
+  constructor(
+    private hiveService: HiveService,
+    private persistence: PersistenceService,
+    private identityService: IdentityService,
+    private storage: StorageService
+  ) {}
 
-  ionViewDidEnter() {
+  async ionViewDidEnter() {
     appManager.setVisible("show");
     titleBarManager.setTitle("Forbidden");
     titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
+
+    let settingProfile = await this.storage.get('profile');
+    let storageProfile = await this.storage.getProfile();
+    console.log('setting profile', settingProfile.name, settingProfile.email);
+    console.log('storage profile', storageProfile.name, storageProfile.email);
   }
 
   public async debugRevokeHiveAuth() {

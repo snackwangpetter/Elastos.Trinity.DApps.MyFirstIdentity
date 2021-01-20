@@ -1,5 +1,5 @@
 <ion-content class="ion-text-center">
-  <ion-slides *ngIf="!wasTemporaryIdentityCreationStarted()" pager="true">
+  <ion-slides *ngIf="!wasTemporaryIdentityCreationStarted()" #slider pager="true" (ionSlideWillChange)="getActiveSlide()">
     <ion-slide>
       <img [src]="!theme.darkMode ? 'assets/icons/did.svg' : 'assets/icons/darkmode/did.svg'">
       <h1>Welcome to</h1>
@@ -27,8 +27,8 @@
     <ion-row class="steps-row">
       <ion-col size="12">
         <ion-label>
-          <h1>Step 1</h1>
-          <h2>Create Identity on the device</h2>
+          <h1>Create Identity</h1>
+          <h2>Add a new Identity to your device</h2>
         </ion-label>
         <ion-icon *ngIf="isLocalDIDcreated()" class="done" name="checkmark-circle-outline"></ion-icon>
         <ion-spinner *ngIf="!isLocalDIDcreated()"></ion-spinner>
@@ -38,8 +38,8 @@
     <ion-row class="steps-row">
       <ion-col size="12">
         <ion-label>
-          <h1>Step 2</h1>
-          <h2>Publish your Identity on the decentralized registry</h2>
+          <h1>Publish Identity</h1>
+          <h2>Record Identity to the public repository. This process will take several minutes.</h2>
         </ion-label>
         <ion-icon *ngIf="isDIDOnChain()" class="done" name="checkmark-circle-outline"></ion-icon>
         <ion-icon *ngIf="!isDIDOnChain() && !isDIDBeingPublished()" class="pending" name="timer-outline"></ion-icon>
@@ -50,35 +50,51 @@
     <ion-row class="steps-row">
       <ion-col size="12">
         <ion-label>
-          <h1>Step 3</h1>
-          <h2>Configure Personal Storage</h2>
+          <h1>Configure Storage</h1>
+          <h2>Setup a personal storage for your Identity's data.</h2>
         </ion-label>
         <ion-icon *ngIf="isHiveVaultReady()" class="done" name="checkmark-circle-outline"></ion-icon>
         <ion-icon *ngIf="!isHiveVaultReady() && !isHiveBeingConfigured()" class="pending" name="timer-outline"></ion-icon>
         <ion-spinner *ngIf="!isHiveVaultReady() && isHiveBeingConfigured()"></ion-spinner>
       </ion-col>
     </ion-row>
+
     <div *ngIf="isEverythingReady()" class="allDone-container">
       <lottie-player src="assets/animations/checkmark.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay loop></lottie-player>
       <p>All done, you now have a DID! When you better understand the advantages of DIDs later, you can export it and reuse it in other apps.</p>
     </div>
-    <div *ngIf="suggestRestartingFromScratch">
-      <p>Sorry, it seems like something unexpected happened. The problem has been reported to the team but in the meantime,
-         would you like to restart the identity creation from the beginning?</p>
-      <ion-button (click)="restartProcessFromScratch()">
-       Restart
-      </ion-button>
-    </div>
+
   </ion-grid>
 </ion-content>
 
 <ion-footer class="ion-no-border">
-  <ion-button *ngIf="!wasTemporaryIdentityCreationStarted()" (click)="newDID()">
-    Create my Identity
-  </ion-button>
-  <ion-button *ngIf="isEverythingReady()" (click)="continueToOriginalLocation()">
-    Continue
-  </ion-button>
+  <div *ngIf="!wasTemporaryIdentityCreationStarted()">
+    <ion-button *ngIf="slideIndex < 2" (click)="slideNext()">
+      Next
+    </ion-button>
+    <ion-button *ngIf="slideIndex >= 2" (click)="addDIDInfo()">
+      Create my Identity
+    </ion-button>
+  </div>
+  <div *ngIf="wasTemporaryIdentityCreationStarted()">
+    <p *ngIf="!isEverythingReady()">
+      Please don't hesitate to leave at any time.
+      You can return and resume your Identity setup when you are ready.
+    </p>
+    <ion-button *ngIf="isEverythingReady()" (click)="continueToOriginalLocation()">
+      Continue
+    </ion-button>
+  </div>
+  <div *ngIf="suggestRestartingFromScratch">
+    <p>
+      Sorry, it seems like something unexpected happened.
+      The problem has been reported to the team but in the meantime,
+      would you like to restart the identity creation from the beginning?
+    </p>
+    <ion-button (click)="restartProcessFromScratch()">
+      Restart
+    </ion-button>
+  </div>
 </ion-footer>
 
 <!-- <ion-content class="ion-text-center">

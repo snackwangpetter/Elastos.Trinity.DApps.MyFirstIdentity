@@ -1,0 +1,21 @@
+.container {
+  padding: 20px;
+  margin: 0;
+
+  ion-input {
+    background: #f0f1ff;
+    height: 50px;
+    border-radius: 8px;
+    font-size: 14px;
+    width: 100%;
+    --padding-start: 12px;
+    margin-bottom: 15px;
+  }
+}
+
+.dark-container {
+  ion-input {
+    background: #464660;
+    color: white;
+  }
+}
