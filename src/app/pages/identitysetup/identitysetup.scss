@@ -101,7 +101,7 @@ ion-grid {
     }
   }
 
-  .allDone-container {
+  .done-msg {
     margin-top: 40px;
     display: flex;
     flex-direction: column;
@@ -110,6 +110,15 @@ ion-grid {
 
     p {
       padding: 0px 20px;
+      font-size: 12px;
+      font-weight: 600;
+    };
+  }
+
+  .inProgress-msg {
+    p {
+      margin: 0;
+      padding: 17.5px;
       font-size: 12px;
       font-weight: 600;
     };

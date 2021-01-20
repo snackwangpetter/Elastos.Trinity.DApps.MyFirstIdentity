@@ -59,7 +59,14 @@
       </ion-col>
     </ion-row>
 
-    <div *ngIf="isEverythingReady()" class="allDone-container">
+    <div *ngIf="!isEverythingReady()" class="inProgress-msg">
+      <p>
+        Please don't hesitate to leave at any time.
+        You can return and resume your Identity setup when you are ready.
+      </p>
+    </div>
+
+    <div *ngIf="isEverythingReady()" class="done-msg">
       <lottie-player src="assets/animations/checkmark.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay loop></lottie-player>
       <p>All done, you now have a decentralized identity and storage space! When you better understand the advantages of DIDs later, you can export it and reuse it in other apps.</p>
     </div>
@@ -76,15 +83,6 @@
       Create my Identity
     </ion-button>
   </div>
-  <div *ngIf="wasTemporaryIdentityCreationStarted()">
-    <p *ngIf="!isEverythingReady()">
-      Please don't hesitate to leave at any time.
-      You can return and resume your Identity setup when you are ready.
-    </p>
-    <ion-button *ngIf="isEverythingReady()" (click)="continueToOriginalLocation()">
-      Continue
-    </ion-button>
-  </div>
   <div *ngIf="suggestRestartingFromScratch">
     <p>
       Sorry, it seems like something unexpected happened.
@@ -93,6 +91,15 @@
     </p>
     <ion-button (click)="restartProcessFromScratch()">
       Restart
+    </ion-button>
+  </div>
+  <div *ngIf="wasTemporaryIdentityCreationStarted() && !suggestRestartingFromScratch">
+    <div *ngIf="!isEverythingReady()">
+      <p>{{ getProgress() }}%</p>
+      <ion-progress-bar mode="ios" type="determinate" [value]="progress"></ion-progress-bar>
+    </div>
+    <ion-button *ngIf="isEverythingReady()" (click)="continueToOriginalLocation()">
+      Continue
     </ion-button>
   </div>
 </ion-footer>

@@ -23,6 +23,8 @@ export class IdentitySetupPage {
   @ViewChild('slider', {static: false}) slider: IonSlides;
 
   public slideIndex = 0;
+  public progress = 0;
+
   public suggestRestartingFromScratch = false;
   private hiveIsBeingConfigured = false;
 
@@ -85,18 +87,50 @@ export class IdentitySetupPage {
         try {
           // Local DID creation
           if (!this.isLocalDIDcreated()) {
+            this.progress = 0.01;
+            let interval = setInterval(() => {
+              if(this.progress === 0.1) {
+                clearInterval(interval);
+              } else {
+                this.progress += 0.01;
+              }
+            }, 10000);
             await this.identityService.createLocalIdentity();
           }
 
           if (!this.isDIDOnChain() && !this.isDIDBeingPublished()) {
+            this.progress = 0.1;
+            let interval = setInterval(() => {
+              if(this.progress === 0.8) {
+                clearInterval(interval);
+              } else {
+                this.progress += 0.01;
+              }
+            }, 10000);
             await this.identityService.publishIdentity();
           }
 
           if (!this.isDIDOnChain() && this.isDIDBeingPublished()) {
+            this.progress === 0.8 ? this.progress = 0.8 : this.progress = 0.1;
+            let interval = setInterval(() => {
+              if(this.progress === 0.8) {
+                clearInterval(interval);
+              } else {
+                this.progress += 0.01;
+              }
+            }, 10000);
             await this.repeatinglyCheckAssistPublicationStatus();
           }
 
           if (!this.isHiveVaultReady()) {
+            this.progress = 0.8;
+            let interval = setInterval(() => {
+              if(this.progress === 0.99) {
+                clearInterval(interval);
+              } else {
+                this.progress += 0.01;
+              }
+            }, 10000);
             await this.prepareHiveVault();
           }
         }
@@ -196,5 +230,10 @@ export class IdentitySetupPage {
     this.suggestRestartingFromScratch = false;
     await this.identityService.resetOnGoingProcess();
     this.resumeIdentitySetupFlow();
+  }
+
+  getProgress() {
+    let percent = this.progress * 100;
+    return percent.toFixed(0);
   }
 }
