@@ -67,6 +67,14 @@ export class ExportIdentityPage {
     this.hideMnemonic = !this.hideMnemonic;
   }
 
+  public getButtonLabel() {
+    if(this.hideMnemonic) {
+      return 'Show Mnemonic';
+    } else {
+      return 'Hide Mnemonic';
+    }
+  }
+
   public async copyMnemonicToClipboard() {
     await this.clipboard.copy(this.mnemonicWords);
     this.toast('Copied to clipboard!');
