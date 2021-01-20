@@ -101,31 +101,31 @@ export class IdentitySetupPage {
           if (!this.isDIDOnChain() && !this.isDIDBeingPublished()) {
             this.progress = 0.1;
             let interval = setInterval(() => {
-              if(this.progress === 0.8) {
+              if(this.progress === 0.6) {
                 clearInterval(interval);
               } else {
                 this.progress += 0.01;
               }
-            }, 10000);
+            }, 20000);
             await this.identityService.publishIdentity();
           }
 
           if (!this.isDIDOnChain() && this.isDIDBeingPublished()) {
-            this.progress === 0.8 ? this.progress = 0.8 : this.progress = 0.1;
+            this.progress === 0.6 ? this.progress = 0.6 : this.progress = 0.1;
             let interval = setInterval(() => {
-              if(this.progress === 0.8) {
+              if(this.progress === 0.6) {
                 clearInterval(interval);
               } else {
                 this.progress += 0.01;
               }
-            }, 10000);
+            }, 20000);
             await this.repeatinglyCheckAssistPublicationStatus();
           }
 
           if (!this.isHiveVaultReady()) {
-            this.progress = 0.8;
+            this.progress = 0.6;
             let interval = setInterval(() => {
-              if(this.progress === 0.99) {
+              if(this.progress >= 0.99) {
                 clearInterval(interval);
               } else {
                 this.progress += 0.01;
