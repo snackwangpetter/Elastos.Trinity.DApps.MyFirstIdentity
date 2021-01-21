@@ -66,11 +66,14 @@
 
 <ion-footer class="ion-no-border">
   <div *ngIf="!wasTemporaryIdentityCreationStarted()">
-    <ion-button *ngIf="slideIndex < 2" (click)="slideNext()">
+    <ion-button *ngIf="!showSpinner && slideIndex < 2" (click)="slideNext()">
       {{ 'next' | translate }}
     </ion-button>
-    <ion-button *ngIf="slideIndex >= 2" (click)="editProfile()">
+    <ion-button *ngIf="!showSpinner && slideIndex >= 2" (click)="editProfile()">
       {{ 'identitysetup.create-my-did' | translate }}
+    </ion-button>
+    <ion-button disabled *ngIf="showSpinner">
+      <ion-spinner></ion-spinner>
     </ion-button>
   </div>
   <div *ngIf="suggestRestartingFromScratch">
@@ -81,7 +84,7 @@
   </div>
   <div *ngIf="wasTemporaryIdentityCreationStarted() && !suggestRestartingFromScratch">
     <div *ngIf="!isEverythingReady()">
-      <p>{{ getProgress() }}% {{ 'identitysetup.takes-long-time' | translate }}</p>
+      <p><strong>{{ getProgress() }}</strong><span>% {{ 'identitysetup.takes-long-time' | translate }}</span></p>
       <ion-progress-bar mode="ios" type="determinate" [value]="progress"></ion-progress-bar>
     </div>
     <ion-button *ngIf="isEverythingReady()" (click)="continueToOriginalLocation()">

@@ -10,6 +10,9 @@ import { PersistenceService } from 'src/app/services/persistence.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { EditProfileComponent, Page } from 'src/app/components/edit-profile/edit-profile.component';
 import { TranslateService } from '@ngx-translate/core';
+import { StorageService } from 'src/app/services/storage.service';
+
+import * as moment from 'moment';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -25,6 +28,7 @@ export class IdentitySetupPage {
 
   public slideIndex = 0;
   public progress = 0;
+  public showSpinner = false;
 
   public suggestRestartingFromScratch = false;
   private hiveIsBeingConfigured = false;
@@ -36,6 +40,7 @@ export class IdentitySetupPage {
     private hiveService: HiveService,
     private persistence: PersistenceService,
     public theme: ThemeService,
+    private storage: StorageService,
     private zone: NgZone,
     private modalCtrl: ModalController,
     private translate: TranslateService
@@ -76,6 +81,7 @@ export class IdentitySetupPage {
     modal.onDidDismiss().then((params) => {
       if(params.data) {
         if(params.data.profileFilled) {
+          this.showSpinner = true;
           this.newDID();
         }
       }
@@ -93,42 +99,57 @@ export class IdentitySetupPage {
           // Local DID creation
           if (!this.isLocalDIDcreated()) {
             this.progress = 0.01;
-            let interval = setInterval(() => {
-              if(this.progress === 0.1) {
-                clearInterval(interval);
-              } else {
-                this.progress += 0.01;
-              }
-            }, 10000);
             await this.identityService.createLocalIdentity();
           }
 
           if (!this.isDIDOnChain() && !this.isDIDBeingPublished()) {
-            this.progress = 0.1;
+            this.progress = 0.01;
             let interval = setInterval(() => {
-              if(this.progress === 0.6) {
+              if(this.progress >= 0.90) {
                 clearInterval(interval);
               } else {
                 this.progress += 0.01;
+                this.storage.set('progressDate', new Date());
+                this.storage.set('progress', this.progress);
               }
-            }, 20000);
+            }, 10000);
             await this.identityService.publishIdentity();
           }
 
           if (!this.isDIDOnChain() && this.isDIDBeingPublished()) {
-            this.progress === 0.6 ? this.progress = 0.6 : this.progress = 0.1;
+            const progressDate = await this.storage.get('progressDate');
+            const progress = await this.storage.get('progress');
+            let newProgress: number = null;
+
+            if(progressDate && progress) {
+              console.log('Last progress time', moment(progressDate).format('LT'));
+              console.log('Left off at progress', progress);
+              const before = moment(progressDate);
+              const now = moment(new Date());
+              const duration = moment.duration(now.diff(before));
+              const durationInSeconds = duration.asSeconds();
+              console.log('Progress in between in seconds', durationInSeconds);
+              const additionalProgress = durationInSeconds / 1000;
+              console.log('Progress while user was absent', additionalProgress);
+              newProgress = additionalProgress + progress;
+            }
+
+            this.progress >= 0.90 ? this.progress = 0.90 : this.progress = newProgress || 0.01;
+            console.log('Progress', this.progress);
             let interval = setInterval(() => {
-              if(this.progress === 0.6) {
+              if(this.progress >= 0.90) {
                 clearInterval(interval);
               } else {
                 this.progress += 0.01;
+                this.storage.set('progressDate', new Date());
+                this.storage.set('progress', this.progress);
               }
-            }, 20000);
+            }, 10000);
             await this.repeatinglyCheckAssistPublicationStatus();
           }
 
           if (!this.isHiveVaultReady()) {
-            this.progress = 0.6;
+            this.progress = 0.90;
             let interval = setInterval(() => {
               if(this.progress >= 0.99) {
                 clearInterval(interval);
