@@ -35,7 +35,7 @@ export class ExportIdentityPage {
 
   async ionViewWillEnter() {
     titleBarManager.setTitle(this.translate.instant('exportidentity.titlebar-title'));
-    titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.HOME);
+    titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
       key: "back",
       iconPath: TitleBarPlugin.BuiltInIcon.BACK
