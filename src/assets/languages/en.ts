@@ -37,6 +37,7 @@ export const en = {
     'create-my-did': 'Create my Identity',
     'error-msg': 'Sorry, it seems like something unexpected happened. The problem has been reported to the team but in the meantime, would you like to restart the identity creation from the beginning?',
     'restart': 'Restart',
+    'takes-long-time': '(this takes several minutes)',
   },
 
   'credaccess': {

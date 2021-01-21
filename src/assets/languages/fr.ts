@@ -22,21 +22,22 @@ export const fr = {
   },
 
   'identitysetup': {
-    'titlebar-title': 'Création d\'identité',
+    'titlebar-title': 'Création d\'une identité',
     'slide2-msg': 'Cette application utilise des identités décentralisées (DIDs). Avec une identité décentralisée, vous contrôlez votre identité et vos données.',
     'slide2-msg2': 'Il semble que vous ne saviez pas de quoi il s\'agit, ou que vous n\'ayez pas encore créé ce genre d\'identité? Les étapes suivante vont automatiquement créer et publier une toute nouvelle identité pour vous, puis configurer votre espace de stockage.',
     'slide3-msg': 'Dans l\'avenir, pour mieux gérer cette identité ou l\'utiliser dans d\'autres applications qui supportent les DIDs, vous pourrez l\'exporter vers un portefeuille d\'identité tiers tel que elastOS.',
-    'create-did': 'Création de l\' identité',
+    'create-did': 'Création de l\'identité',
     'create-did-msg': 'Ajoute la nouvelle identité sur votre appareil',
     'publish-did': 'Publication de l\'identité',
     'publish-did-msg': 'Enregistre l\'identité dans le répertoire public. Cette étape prend entre 10 et 15 minutes.',
-    'config-storage': 'Espace du stockage',
+    'config-storage': 'Espace de stockage',
     'config-storage-msg': 'Configure un espace de stockage pour les données de vos applications.',
     'progress-msg': 'Cette étape étant longue, vous pouvez quitter l\'application à tout moment et revenir plus tard, rien ne sera perdu.',
     'done-msg': 'C\'est prêt, vous avez maintenant une identité décentralisée et un espace de stockage! Lorsque vous aurez mieux compris les avantages des DIDs plus tard, vous pourrez l\'exporter et l\'utiliser dans d\'autres applications.',
     'create-my-did': 'Créer mon Identité',
     'error-msg': 'Hmm, il semble qu\'il y ait eu une erreur. Le problème a été envoyé aux développeurs mais pour l\'instant, souhaitez-vous relancer la création d\'identité depuis le début?',
     'restart': 'Recommencer',
+    'takes-long-time': '(ceci prend plusieurs minutes)',
   },
 
   'credaccess': {
