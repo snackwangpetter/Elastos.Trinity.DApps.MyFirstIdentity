@@ -51,6 +51,7 @@ export class DAppService {
 
                 if (startupInfo.startupMode == AppManagerPlugin.StartupMode.INTENT) {
                     appManager.hasPendingIntent((hasIntent)=>{
+                        console.log("Got has pending intent result:", hasIntent);
                         if (hasIntent) {
                             // Do nothing yet, the intent handle will navigate.
                             appManager.setIntentListener(receivedIntent => {
@@ -101,21 +102,23 @@ export class DAppService {
     private async handleReceivedIntent(receivedIntent: AppManagerPlugin.ReceivedIntent) {
         this.receivedIntent = receivedIntent;
 
-        console.log("Intent received:", receivedIntent);
+        console.log("Intent received:", receivedIntent, JSON.stringify(receivedIntent));
 
         if (receivedIntent.action == "intentdestinationproxy") {
+            console.log("Proxy action request");
             let originalIntentAction: string = receivedIntent.params.originalIntentAction;
             if (originalIntentAction.startsWith("https://did.elastos.net/credaccess")) {
                 // We need to ask user if he wants to sign in with elastOS or if he wants us to generate
                 // a temporary DID.
+                console.log("Navigating to credential access prompt");
                 this.zone.run(()=>this.navCtrl.navigateRoot("credaccessprompt"));
-                ;
             }
             else {
                 console.error("Unhandled proxy intent received:", receivedIntent);
             }
         }
         else if (receivedIntent.action.startsWith("https://did.elastos.net/credaccess")) {
+            console.log("Cred access intent request");
             if (await this.identityService.identityIsFullyReadyToUse()) {
                 this.zone.run(()=>this.navCtrl.navigateRoot("credaccess"));
             }
@@ -125,10 +128,12 @@ export class DAppService {
             }
         }
         else if (receivedIntent.action.startsWith("https://did.elastos.net/appidcredissue")) {
+            console.log("App ID cred issue intent request");
             let applicationDID = await this.getApplicationDID();
             await this.identityService.generateAndSendApplicationIDCredentialIntentResponse(applicationDID, receivedIntent);
         }
         else if (receivedIntent.action.startsWith("https://myfirstidentity.elastos.net/manageidentity")) {
+            console.log("Manage identity intent request");
             this.zone.run(()=>this.navCtrl.navigateRoot("manageidentity"));
         }
         else {

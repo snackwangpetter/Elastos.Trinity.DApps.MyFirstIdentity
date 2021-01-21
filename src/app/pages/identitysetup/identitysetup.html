@@ -95,7 +95,7 @@
   </div>
   <div *ngIf="wasTemporaryIdentityCreationStarted() && !suggestRestartingFromScratch">
     <div *ngIf="!isEverythingReady()">
-      <p>{{ getProgress() }}%</p>
+      <p>{{ getProgress() }}% (this takes several minutes)</p>
       <ion-progress-bar mode="ios" type="determinate" [value]="progress"></ion-progress-bar>
     </div>
     <ion-button *ngIf="isEverythingReady()" (click)="continueToOriginalLocation()">
