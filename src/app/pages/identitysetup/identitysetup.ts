@@ -8,7 +8,7 @@ import { HiveService } from 'src/app/services/hive.service';
 import { IdentityService } from 'src/app/services/identity.service';
 import { PersistenceService } from 'src/app/services/persistence.service';
 import { ThemeService } from 'src/app/services/theme.service';
-import { EditProfileComponent } from 'src/app/components/edit-profile/edit-profile.component';
+import { EditProfileComponent, Page } from 'src/app/components/edit-profile/edit-profile.component';
 import { TranslateService } from '@ngx-translate/core';
 
 declare let appManager: AppManagerPlugin.AppManager;
@@ -65,9 +65,12 @@ export class IdentitySetupPage {
     await this.resumeIdentitySetupFlow();
   }
 
-  async addDIDInfo() {
+  async editProfile() {
     const modal = await this.modalCtrl.create({
       component: EditProfileComponent,
+      componentProps: {
+        from: Page.IDENTITYSETUP
+      },
       cssClass: 'fullscreen'
     });
     modal.onDidDismiss().then((params) => {

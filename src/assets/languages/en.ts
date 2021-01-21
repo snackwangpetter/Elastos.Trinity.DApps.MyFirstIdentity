@@ -72,8 +72,9 @@ export const en = {
     'did-management': 'Identity Management',
     'intro': 'You are currently using a',
     'intro2': 'bound only to this application. Besides, this identity has currently not been saved and cannot be recovered if you reinstall the application, nor can it be shared with other applications.',
-    'intro3': 'We recommend you to export your temporary identity to an external identity wallet such as elastOS (it has to be installed on your device first).',
+    'intro3': 'We recommend you to export your temporary identity to an external identity app such as elastOS (it has to be installed on your device first).',
     'export-did': 'Export Identity',
+    'edit-profile': 'Edit Profile',
   },
 
   'edit-profile': {

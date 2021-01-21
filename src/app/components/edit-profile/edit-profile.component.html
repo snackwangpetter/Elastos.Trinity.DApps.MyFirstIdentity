@@ -1,7 +1,7 @@
 <ion-grid class="container" [class.dark-container]="theme.darkMode">
   <ion-input clearInput placeholder="{{ 'edit-profile.enter-name' | translate }}" [(ngModel)]="name"></ion-input>
   <ion-input clearInput placeholder="{{ 'edit-profile.enter-email' | translate }}" type="email" [(ngModel)]="email"></ion-input>
-  <p class="ion-text-center">{{ 'edit-profile.message' | translate }}</p>
+  <p *ngIf="pageRequestedFrom === 1"class="ion-text-center">{{ 'edit-profile.message' | translate }}</p>
 </ion-grid>
 
 <ion-footer class="ion-no-border">

@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastController, ModalController } from '@ionic/angular';
+import { ToastController, ModalController, NavParams } from '@ionic/angular';
 import { StorageService } from 'src/app/services/storage.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TranslateService } from '@ngx-translate/core';
+
+export enum Page {
+  IDENTITYSETUP = 1,
+  MANAGEIDENTITY = 2,
+}
 
 @Component({
   selector: 'app-edit-profile',
@@ -11,18 +16,25 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class EditProfileComponent implements OnInit {
 
+  public pageRequestedFrom: Page;
   public name: string = "";
   public email: string = "";
 
   constructor(
     private toastCtrl: ToastController,
     private modalCtrl: ModalController,
+    private navParams: NavParams,
     private storage: StorageService,
     public theme: ThemeService,
     public translate: TranslateService
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    if(this.navParams.get('from') !== null) {
+      this.pageRequestedFrom = this.navParams.get('from');
+      console.log('Requested from', this.pageRequestedFrom);
+    };
+  }
 
   async toast(msg: string) {
     const toast = await this.toastCtrl.create({
