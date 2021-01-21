@@ -77,7 +77,7 @@ export class CredAccessPage {
 
   private async createCredential(claimName: string, storePassword: string): Promise<DIDPlugin.VerifiableCredential> {
     const did = await this.identityService.getLocalDID();
-    const localProfile = await this.storage.get('profile');
+    const localProfile = await this.storage.get('profile') || {};
     console.log('Local profile', localProfile);
 
     const localName = localProfile.name || null;
