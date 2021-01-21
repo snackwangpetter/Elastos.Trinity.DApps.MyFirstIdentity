@@ -1,86 +1,85 @@
 export const fr = {
 
   /********** Global **********/
-  'welcome': 'Welcome to',
-  'my-first-did': 'My First Identity',
-  'temp-did': 'temporary identity',
+  'welcome': 'Bienvenue sur',
+  'my-first-did': 'Ma Première Identité',
+  'temp-did': 'identité temporaire',
 
   /********** Prompts **********/
-  'copied': 'Copied to clipboard!',
+  'copied': 'Copié dans le presse-papier!',
 
   /********** Buttons **********/
-  'continue': 'Continue',
-  'next': 'Next',
+  'continue': 'Continuer',
+  'next': 'Suivant',
 
   /********** Screens **********/
   'deadend': {
-    'titlebar-title': 'Forbidden',
+    'titlebar-title': 'Interdit',
     'oops': 'Ooops!',
-    'intro': 'This application cannot be started manually. It must be started with specific intents only.',
+    'intro': 'Cette application ne peut pas être lancée manuellement. Elle doit être lancée uniquement via des intents spécifiques.',
     'debug-revoke': 'Debug: revoke hive auth',
     'debug-call': 'Debug: call vault API',
   },
 
   'identitysetup': {
-    'titlebar-title': 'Identity Setup',
-    'slide2-msg': 'This application uses decentralized identities (DIDs). With decentralized identities, you own your identity, your data.',
-    'slide2-msg2': 'So it seems that you either don\'t know what this is yet, or you have never created your own identity? We are here to help, the following steps will automatically create and publish a brand new Elastos Identity and storage space for you.',
-    'slide3-msg': 'In the future, if you want to better control or use this identity in other DID-powered applications, you may export it to a third party wallet application such as elastOS.',
-    'create-did': 'Create Identity',
-    'create-did-msg': 'Add a new identity to your device',
-    'publish-did': 'Publish Identity',
-    'publish-did-msg': 'Record identity to the public repository. This process will take several minutes.',
-    'config-storage': 'Configure Storage',
-    'config-storage-msg': 'Setup a personal storage for your Identity\'s data.',
-    'progress-msg': 'Please don\'t hesitate to leave at any time. You can return and resume your identity setup when you are ready.',
-    'done-msg': 'All done, you now have a decentralized identity and storage space! When you better understand the advantages of DIDs later, you can export it and reuse it in other apps',
-    'create-my-did': 'Create my Identity',
-    'error-msg': 'Sorry, it seems like something unexpected happened. The problem has been reported to the team but in the meantime, would you like to restart the identity creation from the beginning?',
-    'restart': 'Restart',
+    'titlebar-title': 'Création d\'identité',
+    'slide2-msg': 'Cette application utilise des identités décentralisées (DIDs). Avec une identité décentralisée, vous contrôlez votre identité et vos données.',
+    'slide2-msg2': 'Il semble que vous ne saviez pas de quoi il s\'agit, ou que vous n\'ayez pas encore créé ce genre d\'identité? Les étapes suivante vont automatiquement créer et publier une toute nouvelle identité pour vous, puis configurer votre espace de stockage.',
+    'slide3-msg': 'Dans l\'avenir, pour mieux gérer cette identité ou l\'utiliser dans d\'autres applications qui supportent les DIDs, vous pourrez l\'exporter vers un portefeuille d\'identité tiers tel que elastOS.',
+    'create-did': 'Création de l\' identité',
+    'create-did-msg': 'Ajoute la nouvelle identité sur votre appareil',
+    'publish-did': 'Publication de l\'identité',
+    'publish-did-msg': 'Enregistre l\'identité dans le répertoire public. Cette étape prend entre 10 et 15 minutes.',
+    'config-storage': 'Espace du stockage',
+    'config-storage-msg': 'Configure un espace de stockage pour les données de vos applications.',
+    'progress-msg': 'Cette étape étant longue, vous pouvez quitter l\'application à tout moment et revenir plus tard, rien ne sera perdu.',
+    'done-msg': 'C\'est prêt, vous avez maintenant une identité décentralisée et un espace de stockage! Lorsque vous aurez mieux compris les avantages des DIDs plus tard, vous pourrez l\'exporter et l\'utiliser dans d\'autres applications.',
+    'create-my-did': 'Créer mon Identité',
+    'error-msg': 'Hmm, il semble qu\'il y ait eu une erreur. Le problème a été envoyé aux développeurs mais pour l\'instant, souhaitez-vous relancer la création d\'identité depuis le début?',
+    'restart': 'Recommencer',
   },
 
   'credaccess': {
-    'titlebar-title': 'Profile Request',
-    'profile-request': 'Profile Request',
-    'intro': 'You are currently using a',
-    'message': 'This application is requesting some of your profile information. As this is a temporary identity, default information is going to be returned for now. Later on, you can fully manage your identity using an app such as elastOS.',
+    'titlebar-title': 'Accès au Profil',
+    'profile-request': 'Accès au Profil',
+    'intro': 'Vous utilisez une',
+    'message': 'Cette application demande un accès à certaines informations de votre profile. Comme vous utilisez une identité temporaire, des informations par défaut vont être retournées pour le moment. Plus tard, vous pourrez gérer votre identité en détail via une portefeuille d\'identités tel qu\'elastOS.',
   },
 
   'credaccessprompt': {
-    'titlebar-title': 'Login',
-    'login-msg': 'Select one of the following options',
-    'temp-did': 'Temporary Identity',
-    'please-choose': 'Please Choose',
-    'your-did': 'Your Identity'
+    'titlebar-title': 'Connexion',
+    'login-msg': 'Sélectionnez l\'une des options suivantes',
+    'temp-did': 'Identité Temporaire',
+    'please-choose': 'Veuillez choisir',
+    'your-did': 'Votre identité'
   },
 
   'exportidentity': {
-    'titlebar-title': 'Export Identity',
-    'did': 'Identity',
-    'copy-did': 'Copy Identity',
-    'copy-mnemonic': 'Copy Mnemonic',
-    'mnemonic': 'Mnemonic',
-    'show-mnemonic': 'Show Mnemonic',
-    'hide-mnemonic': 'Hide Mnemonic',
-    'mnemonic-not-copied-msg': 'Safely store the following mnemonic words in the right order. After that, you can copy and paste them in the import identity flow of your favorite identity apps (ex: elastOS).',
-    'mnemonic-copied-msg': 'Your mnemonic words have been copied to your clipboard. Please save them safely. You can now open your third party identity app and import your identity using these words.'
+    'titlebar-title': 'Exporter l\'identité',
+    'did': 'Identité',
+    'copy-did': 'Copier l\'identité',
+    'copy-mnemonic': 'Copier le Mnémonique',
+    'mnemonic': 'Mnémonique',
+    'show-mnemonic': 'Afficher le Mnémonique',
+    'hide-mnemonic': 'Cacher le Mnémonique',
+    'mnemonic-not-copied-msg': 'Notez précieusement les mots suivant, dans le bon ordre. Ensuite, vous pouvez les copier / coller pour importer votre identité dans votre portefeuille d\'identité habituel (ex: elastOS).',
+    'mnemonic-copied-msg': 'Vos mots mnémoniques ont été copiés dans le presse-papier. Enregistrez-les avec soin. Vous pouvez maintenance importer votre identité dans votre portefeuille d\'identité externe.'
   },
 
   'manageidentity': {
-    'titlebar-title': 'Manage Identity',
-    'did-management': 'Identity Management',
-    'intro': 'You are currently using a',
-    'intro2': 'bound only to this application. Besides, this identity has currently not been saved and cannot be recovered if you reinstall the application, nor can it be shared with other applications.',
-    'intro3': 'We recommend you to export your temporary identity to an external identity wallet such as elastOS (it has to be installed on your device first).',
-    'export-did': 'Export Identity',
+    'titlebar-title': 'Gérer l\'identité',
+    'did-management': 'Gestion de l\'identité',
+    'intro': 'Vous utilisez actuellement une ',
+    'intro2': 'enregistrée uniquement dans cette application. De plus, cette identité n\'a psa encore été sauvegardée et sera perdue si vous réinstallez l\'application, et ne pourra pas être réutilisée dans d\'autres applications.',
+    'intro3': 'Nous vous recommandons d\'exporter cette identité vers un portefeuille d\'identité externe tel qu\'elastOS (application tierce que vous devez d\'abord installer).',
+    'export-did': 'Exporter l\'Identité',
   },
 
   'edit-profile': {
-    'message': 'Providing your information is optional. You can skip this step and continue.',
-    'enter-name': 'Enter Name',
-    'enter-email': 'Enter Email'
+    'message': 'Ces informations sont optionnelles. Vous pouvez passer cette étape si besoin.',
+    'enter-name': 'Saisir un nom',
+    'enter-email': 'Saisir une adresse email'
   },
-
 };
 
 

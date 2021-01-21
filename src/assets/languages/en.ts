@@ -29,7 +29,7 @@ export const en = {
     'create-did': 'Create Identity',
     'create-did-msg': 'Add a new identity to your device',
     'publish-did': 'Publish Identity',
-    'publish-did-msg': 'Record identity to the public repository. This process will take several minutes.',
+    'publish-did-msg': 'Record identity to the public repository. This step takes between 10 and 15 minutes.',
     'config-storage': 'Configure Storage',
     'config-storage-msg': 'Setup a personal storage for your Identity\'s data.',
     'progress-msg': 'Please don\'t hesitate to leave at any time. You can return and resume your identity setup when you are ready.',
