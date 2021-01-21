@@ -1,14 +1,14 @@
 <ion-content class="ion-text-center">
   <ion-grid class="container">
 
-   <h1>Ooops!</h1>
-   <p>This application cannot be started manually. It must be started with specific intents only.</p>
+   <h1>{{ 'deadend.oops' | translate }}</h1>
+   <p>{{ 'deadend.intro' | translate }}</p>
 
     <ion-button class="btn ion-activatable ripple" (click)="debugRevokeHiveAuth()">
-      Debug: revoke hive auth
+      {{ 'deadend.debug-revoke' | translate }}
     </ion-button>
     <ion-button class="btn ion-activatable ripple" (click)="debugCallVaultAPI()">
-      Debug: call vault API
+        {{ 'deadend.debug-call' | translate }}
     </ion-button>
 
   </ion-grid>

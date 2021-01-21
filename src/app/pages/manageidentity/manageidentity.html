@@ -1,16 +1,11 @@
 <ion-content class="ion-text-center">
   <ion-grid class="container">
-    <h1>Identity management</h1>
+    <img [src]="!theme.darkMode ? 'assets/icons/did.svg' : 'assets/icons/darkmode/did.svg'">
+    <!-- <h1>{{ 'manageidentity.did-management' | translate }}</h1> -->
     <p>
-      You are currently using a <b>temporary identity</b>, bound only to this application. Besides, this identity has
-      currently not been saved and cannot be recovered if you reinstall the application, nor can it be shared
-      with other applications.
+      {{ 'manageidentity.intro' | translate }} <b>{{ 'temp-did' | translate }}</b>, {{ 'manageidentity.intro2' | translate }}
     </p>
-    <p>
-      We recommend you to export your temporary identity to an external identity wallet such as elastOS (it has to
-      be installed on your device first).
-    </p>
-    <ion-button (click)="exportIdentity()">Export identity</ion-button>
+    <p>{{ 'manageidentity.intro3' | translate }}</p>
 
     <!--<p>After your identity is exported to elastOS, touch the button below to use elastOS instead of your
       temporary identity. This change will apply next time you will sign in or your your identity or
@@ -19,3 +14,7 @@
     <ion-button (click)="stopUsingTemporaryIdentity()">Deactivate temporary identity</ion-button>-->
   </ion-grid>
 </ion-content>
+
+<ion-footer class="ion-no-border">
+  <ion-button (click)="exportIdentity()">{{ 'manageidentity.export-did' | translate }}</ion-button>
+</ion-footer>

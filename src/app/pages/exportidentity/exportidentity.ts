@@ -5,6 +5,7 @@ import { IdentityService } from 'src/app/services/identity.service';
 import { PersistenceService } from 'src/app/services/persistence.service';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
 import { ThemeService } from 'src/app/services/theme.service';
+import { TranslateService } from '@ngx-translate/core';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -28,10 +29,12 @@ export class ExportIdentityPage {
     public identityService: IdentityService,
     private toastCtrl: ToastController,
     private clipboard: Clipboard,
-    public theme: ThemeService
+    public theme: ThemeService,
+    public translate: TranslateService
   ) {}
 
   async ionViewWillEnter() {
+    titleBarManager.setTitle(this.translate.instant('exportidentity.titlebar-title'));
     titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.HOME);
     titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
       key: "back",
@@ -43,6 +46,8 @@ export class ExportIdentityPage {
         this.navCtrl.back();
     };
     titleBarManager.addOnItemClickedListener(this.titleBarListener);
+
+    appManager.setVisible("show");
 
     // Get the DID string info
     let did = await this.identityService.getLocalDID();
@@ -59,8 +64,6 @@ export class ExportIdentityPage {
   }
 
   ionViewDidEnter() {
-    appManager.setVisible("show");
-    titleBarManager.setTitle("Export Identity");
   }
 
   public showMnemonic() {
@@ -69,28 +72,28 @@ export class ExportIdentityPage {
 
   public getButtonLabel() {
     if(this.hideMnemonic) {
-      return 'Show Mnemonic';
+      return 'exportidentity.show-mnemonic';
     } else {
-      return 'Hide Mnemonic';
+      return 'exportidentity.hide-mnemonic';
     }
   }
 
   public async copyMnemonicToClipboard() {
     await this.clipboard.copy(this.mnemonicWords);
-    this.toast('Copied to clipboard!');
+    this.toast('copied');
     this.mnemonicCopiedToClipboard = true;
   }
 
   public async copyDIDStringToClipboard() {
     await this.clipboard.copy(this.didString);
-    this.toast('Copied to clipboard!');
+    this.toast('copied');
   }
 
   async toast(msg: string) {
     const toast = await this.toastCtrl.create({
       mode: 'ios',
       color: 'primary',
-      header: msg,
+      header: this.translate.instant(msg),
       duration: 3000,
       position: 'top'
     });

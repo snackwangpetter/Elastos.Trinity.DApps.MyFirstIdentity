@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { StorageService } from './storage.service';
 import { IdentityService } from './identity.service';
 import { ThemeService } from './theme.service';
+import { TranslateService } from '@ngx-translate/core';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let didManager: DIDPlugin.DIDManager;
@@ -33,11 +34,13 @@ export class DAppService {
     constructor(
         private navCtrl: NavController,
         public zone: NgZone,
+        private translate: TranslateService,
         private identityService: IdentityService,
         private theme: ThemeService
     ) {}
 
     public init(): Promise<any> {
+        this.getLanguage();
         console.log("DApp service is initializing");
 
         return new Promise((resolve)=>{
@@ -69,8 +72,7 @@ export class DAppService {
                     // Starting app as default UI: not handle - this application must always start with an intent.
                     console.warn("Application started with default UI mode. This is not supported.");
                     // this.zone.run(()=>this.navCtrl.navigateRoot("deadend"));
-                    // this.zone.run(()=>this.navCtrl.navigateRoot("credaccessprompt"));
-                    this.zone.run(()=>this.navCtrl.navigateRoot("exportidentity"));
+                    this.zone.run(()=>this.navCtrl.navigateRoot("credaccessprompt"));
                     resolve();
                 }
             })
@@ -88,6 +90,9 @@ export class DAppService {
       }
       switch (msg.type) {
         case MessageType.IN_REFRESH:
+          if (params.action === "currentLocaleChanged") {
+            this.setCurLang(params.data);
+          }
           if(params.action === 'preferenceChanged' && params.data.key === "ui.darkmode") {
             this.zone.run(() => {
               console.log('Dark Mode toggled');
@@ -96,6 +101,22 @@ export class DAppService {
           }
           break;
       }
+    }
+
+    setCurLang(lang: string) {
+      console.log("Setting current language to "+ lang);
+
+      this.zone.run(()=>{
+        this.translate.use(lang);
+      });
+    }
+
+    getLanguage() {
+      appManager.getLocale(
+        (defaultLang, currentLang, systemLang) => {
+          this.setCurLang(currentLang);
+        }
+      );
     }
 
     private async handleReceivedIntent(receivedIntent: AppManagerPlugin.ReceivedIntent) {

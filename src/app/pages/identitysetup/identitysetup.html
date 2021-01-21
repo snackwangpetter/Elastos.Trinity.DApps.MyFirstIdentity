@@ -2,24 +2,17 @@
   <ion-slides *ngIf="!wasTemporaryIdentityCreationStarted()" #slider pager="true" (ionSlideWillChange)="getActiveSlide()">
     <ion-slide>
       <img [src]="!theme.darkMode ? 'assets/icons/did.svg' : 'assets/icons/darkmode/did.svg'">
-      <h1>Welcome to</h1>
-      <h2>My First Identity</h2>
+      <h1>{{ 'welcome' | translate }}</h1>
+      <h2>{{ 'my-first-did' | translate }}</h2>
     </ion-slide>
     <ion-slide>
      <lottie-player src="assets/animations/fingerprint.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay loop></lottie-player>
-      <p>
-        This application uses decentralized identities (DIDs). With decentralized identities,
-        you own your identity, your data. <br><br> So it seems that you either don't know what this is yet,
-        or you have never created your own DID? We are here to help! The following steps will
-        automatically create and publish a brand new Elastos identity and storage space for you.
-      </p>
+      <p>{{ 'identitysetup.slide2-msg' | translate }}</p>
+      <p>{{ 'identitysetup.slide2-msg2' | translate }}</p>
     </ion-slide>
     <ion-slide>
-        <lottie-player src="assets/animations/device.json" background="transparent" speed="1" style="width: 300px; height: 300px;" autoplay loop></lottie-player>
-      <p style="position: relative; top: -75px;">
-        In the future, if you want to better control or use this identity in other
-        DID-powered applications, you may export it to a third party wallet application such as elastOS.
-      </p>
+      <lottie-player src="assets/animations/device.json" background="transparent" speed="1" style="width: 300px; height: 300px;" autoplay loop></lottie-player>
+      <p style="position: relative; top: -75px;">{{ 'identitysetup.slide3-msg' | translate }}</p>
     </ion-slide>
   </ion-slides>
 
@@ -27,8 +20,8 @@
     <ion-row class="steps-row">
       <ion-col size="12">
         <ion-label>
-          <h1>Create Identity</h1>
-          <h2>Add a new Identity to your device</h2>
+          <h1>{{ 'identitysetup.create-did' | translate }}</h1>
+          <h2>{{ 'identitysetup.create-did-msg' | translate }}</h2>
         </ion-label>
         <ion-icon *ngIf="isLocalDIDcreated()" class="done" name="checkmark-circle-outline"></ion-icon>
         <ion-spinner *ngIf="!isLocalDIDcreated()"></ion-spinner>
@@ -38,8 +31,8 @@
     <ion-row class="steps-row">
       <ion-col size="12">
         <ion-label>
-          <h1>Publish Identity</h1>
-          <h2>Record Identity to the public repository. This process will take several minutes.</h2>
+          <h1>{{ 'identitysetup.publish-did' | translate }}</h1>
+          <h2>{{ 'identitysetup.publish-did-msg' | translate }}</h2>
         </ion-label>
         <ion-icon *ngIf="isDIDOnChain()" class="done" name="checkmark-circle-outline"></ion-icon>
         <ion-icon *ngIf="!isDIDOnChain() && !isDIDBeingPublished()" class="pending" name="timer-outline"></ion-icon>
@@ -50,8 +43,8 @@
     <ion-row class="steps-row">
       <ion-col size="12">
         <ion-label>
-          <h1>Configure Storage</h1>
-          <h2>Setup a personal storage for your Identity's data.</h2>
+          <h1>{{ 'identitysetup.config-storage' | translate }}</h1>
+          <h2>{{ 'identitysetup.config-storage-msg' | translate }}</h2>
         </ion-label>
         <ion-icon *ngIf="isHiveVaultReady()" class="done" name="checkmark-circle-outline"></ion-icon>
         <ion-icon *ngIf="!isHiveVaultReady() && !isHiveBeingConfigured()" class="pending" name="timer-outline"></ion-icon>
@@ -59,16 +52,13 @@
       </ion-col>
     </ion-row>
 
-    <div *ngIf="!isEverythingReady()" class="inProgress-msg">
-      <p>
-        Please don't hesitate to leave at any time.
-        You can return and resume your Identity setup when you are ready.
-      </p>
+    <div *ngIf="!isEverythingReady()" class="progress-msg">
+      <p>{{ 'identitysetup.progress-msg' | translate }}</p>
     </div>
 
     <div *ngIf="isEverythingReady()" class="done-msg">
       <lottie-player src="assets/animations/checkmark.json" background="transparent" speed="1" style="width: 150px; height: 150px;" autoplay loop></lottie-player>
-      <p>All done, you now have a decentralized identity and storage space! When you better understand the advantages of DIDs later, you can export it and reuse it in other apps.</p>
+      <p>{{ 'identitysetup.done-msg' | translate }}</p>
     </div>
 
   </ion-grid>
@@ -77,20 +67,16 @@
 <ion-footer class="ion-no-border">
   <div *ngIf="!wasTemporaryIdentityCreationStarted()">
     <ion-button *ngIf="slideIndex < 2" (click)="slideNext()">
-      Next
+      {{ 'next' | translate }}
     </ion-button>
     <ion-button *ngIf="slideIndex >= 2" (click)="addDIDInfo()">
-      Create my Identity
+      {{ 'identitysetup.create-my-did' | translate }}
     </ion-button>
   </div>
   <div *ngIf="suggestRestartingFromScratch">
-    <p>
-      Sorry, it seems like something unexpected happened.
-      The problem has been reported to the team but in the meantime,
-      would you like to restart the identity creation from the beginning?
-    </p>
+    <p>{{ 'identitysetup.error-msg' | translate }}</p>
     <ion-button (click)="restartProcessFromScratch()">
-      Restart
+      {{ 'identitysetup.restart' | translate }}
     </ion-button>
   </div>
   <div *ngIf="wasTemporaryIdentityCreationStarted() && !suggestRestartingFromScratch">
@@ -99,7 +85,7 @@
       <ion-progress-bar mode="ios" type="determinate" [value]="progress"></ion-progress-bar>
     </div>
     <ion-button *ngIf="isEverythingReady()" (click)="continueToOriginalLocation()">
-      Continue
+      {{ 'continue' | translate }}
     </ion-button>
   </div>
 </ion-footer>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ToastController, ModalController } from '@ionic/angular';
 import { StorageService } from 'src/app/services/storage.service';
 import { ThemeService } from 'src/app/services/theme.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-edit-profile',
@@ -17,7 +18,8 @@ export class EditProfileComponent implements OnInit {
     private toastCtrl: ToastController,
     private modalCtrl: ModalController,
     private storage: StorageService,
-    public theme: ThemeService
+    public theme: ThemeService,
+    public translate: TranslateService
   ) { }
 
   ngOnInit() {}

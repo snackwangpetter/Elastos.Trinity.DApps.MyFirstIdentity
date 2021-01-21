@@ -3,19 +3,19 @@
 
     <ion-row>
       <ion-col size="12">
-        <h1>Identity</h1>
+        <h1>{{ 'exportidentity.did' | translate }}</h1>
         <h3>{{ didString }}</h3>
         <!-- <h3>did:elastosfenfwfhwdhewfeww3re</h3> -->
-        <ion-button (click)="copyDIDStringToClipboard()">Copy Identity</ion-button>
+        <ion-button (click)="copyDIDStringToClipboard()">{{ 'exportidentity.copy-did' | translate }}</ion-button>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col size="12">
-        <h1>Mnemonic</h1>
+        <h1>{{ 'exportidentity.mnemonic' | translate }}</h1>
         <h3 *ngIf="!hideMnemonic" id="mnemonic">{{ mnemonicWords }}</h3>
 <!--         <h3 *ngIf="!hideMnemonic" id="mnemonic">Lorem ipsum dolor sit amet consectetur, adipisicing elit. At dolorum similique cupiditate</h3> -->
         <h3 *ngIf="hideMnemonic" id="mnemonic">************************************</h3>
-        <ion-button (click)="showMnemonic()">{{ getButtonLabel() }}</ion-button>
+        <ion-button (click)="showMnemonic()">{{ getButtonLabel() | translate }}</ion-button>
       </ion-col>
     </ion-row>
 
@@ -23,16 +23,9 @@
 </ion-content>
 
 <ion-footer class="ion-no-border">
-  <p *ngIf="!mnemonicCopiedToClipboard">
-    Write down the following mnemonic words on a paper, in the right order, and permanently save them. After that,
-    you can copy them here and paste them in the import identity flow of your favorite identity application
-    (ex: elastOS).
-  </p>
-  <p *ngIf="mnemonicCopiedToClipboard">
-    Your mnemonic words have been copied to your clipboard. Please save them safely. You can now open your third
-    party identity wallet application and import your identity using those words.
-  </p>
-  <ion-button *ngIf="!mnemonicCopiedToClipboard" (click)="copyMnemonicToClipboard()">Copy Mnemonic</ion-button>
+  <p *ngIf="!mnemonicCopiedToClipboard">{{ 'exportidentity.mnemonic-not-copied-msg' | translate }}</p>
+  <p *ngIf="mnemonicCopiedToClipboard">{{ 'exportidentity.mnemonic-copied-msg' | translate }}</p>
+  <ion-button *ngIf="!mnemonicCopiedToClipboard" (click)="copyMnemonicToClipboard()">{{ 'exportidentity.copy-mnemonic' | translate }}</ion-button>
 </ion-footer>
 
 <!-- <ion-content class="ion-text-center">

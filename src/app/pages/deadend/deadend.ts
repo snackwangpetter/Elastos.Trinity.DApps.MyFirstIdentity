@@ -3,6 +3,7 @@ import { HiveService } from 'src/app/services/hive.service';
 import { IdentityService } from 'src/app/services/identity.service';
 import { PersistenceService } from 'src/app/services/persistence.service';
 import { StorageService } from 'src/app/services/storage.service';
+import { TranslateService } from '@ngx-translate/core';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -17,12 +18,13 @@ export class DeadEndPage {
     private hiveService: HiveService,
     private persistence: PersistenceService,
     private identityService: IdentityService,
-    private storage: StorageService
+    private storage: StorageService,
+    public translate: TranslateService
   ) {}
 
   async ionViewDidEnter() {
     appManager.setVisible("show");
-    titleBarManager.setTitle("Forbidden");
+    titleBarManager.setTitle(this.translate.instant('deadend.titlebar-title'));
     titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
 
     let settingProfile = await this.storage.get('profile');

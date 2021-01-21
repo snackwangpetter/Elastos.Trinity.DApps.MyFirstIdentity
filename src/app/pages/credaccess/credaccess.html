@@ -1,18 +1,12 @@
 <ion-content class="ion-text-center">
   <ion-grid class="container">
     <lottie-player src="assets/animations/credaccess2.json" background="transparent" speed="1" style="width: 250px; height: 250px;" autoplay loop></lottie-player>
-    <h1>Profile Request</h1>
-    <p>You are currently using a <b>temporary identity</b>.</p>
-    <p>
-      This application is requesting some of your profile information such as a name, etc. As this is a temporary identity, default
-      information is going to be returned for now. Later on, you can fully manage your identity using an Identity
-      wallet such as elastOS.
-    </p>
+    <h1>{{ 'credaccess.profile-request' | translate }}</h1>
+    <p>{{ 'credaccess.intro' | translate }} <br> <b>{{ 'temp-did' | translate }}</b>.</p>
+    <p>{{ 'credaccess.message' | translate }}</p>
   </ion-grid>
 </ion-content>
 
 <ion-footer class="ion-no-border">
-  <ion-button (click)="finalizeOriginalIntent()">
-    Continue
-  </ion-button>
+  <ion-button (click)="finalizeOriginalIntent()">{{ 'continue' | translate }}</ion-button>
 </ion-footer>

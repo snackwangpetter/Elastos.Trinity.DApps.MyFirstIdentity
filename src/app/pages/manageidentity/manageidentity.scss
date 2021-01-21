@@ -6,19 +6,32 @@
   justify-content: center;
   align-items: center;
 
-  h1, p {
-    margin: 0;
-  }
+  img {
+    width: 100px;
+    height: 100px;
+    animation: imgAnimate;
+    animation-duration: 1000ms;
+    animation-fill-mode: forwards;
+    padding-bottom: 20px;
 
-  h1 {
-    font-size: 25px;
-    font-weight: 700;
-    letter-spacing: -0.43px;
+
+    @keyframes imgAnimate {
+      0% { width: 0px; height: 0px; }
+      100% { width: 100px; height: 100px; }
+    }
   }
 
   p {
-    padding-top: 20px;
     font-size: 14px;
     font-weight: 500;
   }
+}
+
+ion-footer {
+  p {
+    padding: 0px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+  };
 }

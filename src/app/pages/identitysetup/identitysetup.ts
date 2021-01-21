@@ -9,6 +9,7 @@ import { IdentityService } from 'src/app/services/identity.service';
 import { PersistenceService } from 'src/app/services/persistence.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { EditProfileComponent } from 'src/app/components/edit-profile/edit-profile.component';
+import { TranslateService } from '@ngx-translate/core';
 
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
@@ -36,13 +37,14 @@ export class IdentitySetupPage {
     private persistence: PersistenceService,
     public theme: ThemeService,
     private zone: NgZone,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private translate: TranslateService
   ) {
   }
 
   ionViewDidEnter() {
     appManager.setVisible("show");
-    titleBarManager.setTitle("Identity Setup");
+    titleBarManager.setTitle(this.translate.instant('identitysetup.titlebar-title'));
     titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
 
     if (!this.isEverythingReady() && this.wasTemporaryIdentityCreationStarted()) {

@@ -1,11 +1,9 @@
 <ion-grid class="container" [class.dark-container]="theme.darkMode">
-  <ion-input clearInput placeholder="Enter Name" [(ngModel)]="name"></ion-input>
-  <ion-input clearInput placeholder="Enter Email" type="email" [(ngModel)]="email"></ion-input>
-  <p class="ion-text-center">Providing your information is optional. You can skip this step and continue.</p>
+  <ion-input clearInput placeholder="{{ 'edit-profile.enter-name' | translate }}" [(ngModel)]="name"></ion-input>
+  <ion-input clearInput placeholder="{{ 'edit-profile.enter-email' | translate }}" type="email" [(ngModel)]="email"></ion-input>
+  <p class="ion-text-center">{{ 'edit-profile.message' | translate }}</p>
 </ion-grid>
 
 <ion-footer class="ion-no-border">
-  <ion-button (click)="continue()">
-    Continue
-  </ion-button>
+  <ion-button (click)="continue()">{{ 'continue' | translate }}</ion-button>
 </ion-footer>

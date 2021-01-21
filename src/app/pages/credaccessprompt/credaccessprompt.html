@@ -1,13 +1,13 @@
 <ion-content class="ion-text-center">
   <ion-grid class="container">
     <img [src]="!theme.darkMode ? 'assets/icons/did.svg' : 'assets/icons/darkmode/did.svg'">
-    <h1>Welcome to</h1>
-    <h2>My First Identity</h2>
+    <h1>{{ 'welcome' | translate }}</h1>
+    <h2>{{ 'my-first-did' | translate }}</h2>
   </ion-grid>
 </ion-content>
 
 <ion-footer class="ion-no-border">
-  <p>Login with one of the following options</p>
+  <p>{{ 'credaccessprompt.login-msg' | translate }}</p>
   <ion-button (click)="elastOSSignIn()">elastOS</ion-button>
-  <ion-button (click)="useTemporaryIdentity()">Temporary Identity</ion-button>
+  <ion-button (click)="useTemporaryIdentity()">{{ 'credaccessprompt.temp-did' | translate }}</ion-button>
 </ion-footer>
