@@ -1,22 +1,13 @@
 <ion-content class="ion-text-center">
   <ion-grid class="container">
     <img [src]="!theme.darkMode ? 'assets/icons/did.svg' : 'assets/icons/darkmode/did.svg'">
-<<<<<<< HEAD
-    <h1>{{ 'welcome' | translate }}</h1>
-    <h2>{{ 'my-first-did' | translate }}</h2>
-=======
-    <h1>Please choose</h1>
-    <h2>Your Identity</h2>
->>>>>>> d647464e224c580bf30b2cc10b4822fadd24062c
+    <h1>{{ 'credaccessprompt.please-choose' | translate }}</h1>
+    <h2>{{ 'credaccessprompt.your-did' | translate }}</h2>
   </ion-grid>
 </ion-content>
 
 <ion-footer class="ion-no-border">
-<<<<<<< HEAD
   <p>{{ 'credaccessprompt.login-msg' | translate }}</p>
-=======
-  <p>Login with one of the following options:</p>
->>>>>>> d647464e224c580bf30b2cc10b4822fadd24062c
   <ion-button (click)="elastOSSignIn()">elastOS</ion-button>
   <ion-button (click)="useTemporaryIdentity()">{{ 'credaccessprompt.temp-did' | translate }}</ion-button>
 </ion-footer>

@@ -48,8 +48,10 @@ export const zh = {
 
   'credaccessprompt': {
     'titlebar-title': 'Login',
-    'login-msg': 'Login with one of the following options',
+    'login-msg': 'Select one of the following options',
     'temp-did': 'Temporary Identity',
+    'please-choose': 'Please Choose',
+    'your-did': 'Your Identity'
   },
 
   'exportidentity': {
