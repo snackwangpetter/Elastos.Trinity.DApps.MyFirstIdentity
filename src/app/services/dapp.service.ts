@@ -74,7 +74,7 @@ export class DAppService {
                     console.warn("Application started with default UI mode. This is not supported.");
                     // this.zone.run(()=>this.navCtrl.navigateRoot("deadend"));
                     // this.zone.run(()=>this.navCtrl.navigateRoot("credaccessprompt"));
-                    this.zone.run(()=>this.navCtrl.navigateRoot("manageidentity"));
+                    this.zone.run(()=>this.navCtrl.navigateRoot("exportidentity"));
 
                     resolve();
                 }
