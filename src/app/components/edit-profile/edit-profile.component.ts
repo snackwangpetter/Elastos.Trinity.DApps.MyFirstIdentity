@@ -33,7 +33,19 @@ export class EditProfileComponent implements OnInit {
     if(this.navParams.get('from') !== null) {
       this.pageRequestedFrom = this.navParams.get('from');
       console.log('Requested from', this.pageRequestedFrom);
+
+      if(this.pageRequestedFrom === Page.MANAGEIDENTITY) {
+        this.getProfileInfo();
+      }
     };
+  }
+
+  async getProfileInfo() {
+    const localProfile = await this.storage.get('profile') || {};
+    console.log('Local profile', localProfile);
+
+    this.name = localProfile.name || "";
+    this.email = localProfile.email || "";
   }
 
   async toast(msg: string) {
