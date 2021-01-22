@@ -68,13 +68,13 @@ export const fr = {
   },
 
   'manageidentity': {
-    'titlebar-title': 'Gérer l\'identité',
+    'titlebar-title': 'Mon l\'identité',
     'did-management': 'Gestion de l\'identité',
     'intro': 'Vous utilisez actuellement une ',
     'intro2': 'enregistrée uniquement dans cette application. De plus, cette identité n\'a psa encore été sauvegardée et sera perdue si vous réinstallez l\'application, et ne pourra pas être réutilisée dans d\'autres applications.',
     'intro3': 'Nous vous recommandons d\'exporter cette identité vers un portefeuille d\'identité externe tel qu\'elastOS (application tierce que vous devez d\'abord installer).',
     'export-did': 'Exporter l\'Identité',
-    'edit-profile': 'Edit Profile',
+    'edit-profile': 'Modifier le profil',
   },
 
   'edit-profile': {
