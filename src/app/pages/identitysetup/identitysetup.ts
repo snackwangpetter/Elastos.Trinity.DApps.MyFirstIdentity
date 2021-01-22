@@ -121,20 +121,33 @@ export class IdentitySetupPage {
             const progress = await this.storage.get('progress');
             let newProgress: number = null;
 
+            // If progress was previously initiated before starting app
             if(progressDate && progress) {
               console.log('Last progress time', moment(progressDate).format('LT'));
               console.log('Left off at progress', progress);
+
+              // Get saved date
               const before = moment(progressDate);
               const now = moment(new Date());
+              // Find duration in seconds between saved date and now
               const duration = moment.duration(now.diff(before));
               const durationInSeconds = duration.asSeconds();
               console.log('Progress in between in seconds', durationInSeconds);
+              // Divide duration in a way progress can handle. ex: 10 seconds / 1000 = 0.01 which is 1%
               const additionalProgress = durationInSeconds / 1000;
               console.log('Progress while user was absent', additionalProgress);
+              // Add new progress to saved progress
               newProgress = additionalProgress + progress;
             }
 
-            this.progress >= 0.90 ? this.progress = 0.90 : this.progress = newProgress || 0.01;
+            if(newProgress && newProgress <= 0.9) {
+              this.progress = newProgress
+            } else if(this.progress >= 0.9) {
+              this.progress = 0.9;
+            } else {
+              this.progress = 0.01;
+            }
+
             console.log('Progress', this.progress);
             let interval = setInterval(() => {
               if(this.progress >= 0.90) {
