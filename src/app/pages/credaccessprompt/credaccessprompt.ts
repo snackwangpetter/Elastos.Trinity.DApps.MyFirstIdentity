@@ -59,4 +59,12 @@ export class CredAccessPromptPage {
       console.log("Failed to send intent response:", err);
     });
   }
+
+  getButtonLabel() {
+    if(this.theme.isAndroid) {
+      return 'elastOS'
+    } else {
+      return 'credaccessprompt.elastos-essentials'
+    }
+  }
 }

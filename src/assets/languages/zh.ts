@@ -52,7 +52,8 @@ export const zh = {
     'login-msg': '从下列选项中选择一个',
     'temp-did': '临时身份',
     'please-choose': '请选择',
-    'your-did': '您的身份'
+    'your-did': '您的身份',
+    'elastos-essentials': 'elastOS Essentials',
   },
 
   'exportidentity': {

@@ -52,7 +52,8 @@ export const fr = {
     'login-msg': 'Sélectionnez l\'une des options suivantes',
     'temp-did': 'Identité Temporaire',
     'please-choose': 'Veuillez choisir',
-    'your-did': 'Votre identité'
+    'your-did': 'Votre identité',
+    'elastos-essentials': 'elastOS Essentials',
   },
 
   'exportidentity': {

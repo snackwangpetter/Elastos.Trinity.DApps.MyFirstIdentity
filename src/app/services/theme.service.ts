@@ -9,6 +9,7 @@ declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 })
 export class ThemeService {
   public darkMode = false;
+  public isAndroid = false;
 
   constructor(private platform: Platform) {
     this.platform.ready().then(() => {
@@ -17,6 +18,10 @@ export class ThemeService {
   }
 
   getTheme() {
+    if (this.platform.platforms().indexOf('android') === 0) {
+      this.isAndroid = true;
+    }
+
     appManager.getPreference("ui.darkmode", (value) => {
       this.darkMode = value;
       this.setTheme(this.darkMode);
