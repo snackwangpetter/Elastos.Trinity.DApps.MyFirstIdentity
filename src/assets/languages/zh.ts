@@ -75,7 +75,7 @@ export const zh = {
     'intro2': '仅绑定到此应用程序。 此外，该身份当前尚未保存，如果您重新安装该应用程序，则该身份无法恢复，也无法与其他应用程序共享。',
     'intro3': '我们建议您将临时身份导出到外部身份钱包，例如elastOS（必须先将其安装在设备上）。',
     'export-did': '导出身份',
-    'edit-profile': 'Edit Profile',
+    'edit-profile': '编辑档案',
   },
 
   'edit-profile': {
