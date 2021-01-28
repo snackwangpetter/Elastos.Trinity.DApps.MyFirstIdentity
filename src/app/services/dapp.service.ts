@@ -136,6 +136,28 @@ export class DAppService {
                 console.log("Navigating to credential access prompt");
                 this.zone.run(()=>this.navCtrl.navigateRoot("credaccessprompt"));
             }
+            else if (originalIntentAction.startsWith("https://did.elastos.net/appidcredissue")) {
+                // We redirect this operation (external) to elastOS if the previous user choice was to use
+                // elastOS, or we automatically generate and return the credential from the temporary identity.
+                let responseParams = {
+                    action: null
+                };
+
+                if (await this.identityService.isUsingBuiltInIdentityWalletPreference()) {
+                    console.log("User last used the temporary identity, so we generate the appid credential with the temporary identity");
+                    responseParams.action = "internal";
+                }
+                else {
+                    console.log("User last used the external identity wallet, so we redirect him there.");
+                    responseParams.action = "external";
+                }
+
+                appManager.sendIntentResponse(null, responseParams, this.getReceivedIntent().intentId, ()=>{
+                    console.log("Proxy intent response sent, original request:", this.getReceivedIntent(), "Response params:", responseParams);
+                }, (err)=>{
+                    console.log("Failed to send intent response:", err);
+                });
+            }
             else {
                 console.error("Unhandled proxy intent received:", receivedIntent);
             }

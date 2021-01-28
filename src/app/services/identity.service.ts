@@ -104,6 +104,9 @@ export class IdentityService {
 
     public async getLocalDID(): Promise<DIDPlugin.DID> {
         let persistentInfo = this.persistence.getPersistentInfo();
+        if (!persistentInfo.did.storeId)
+            return null;
+
         let didStore = await this.didHelper.openDidStore(persistentInfo.did.storeId);
         return await this.didHelper.loadDID(didStore, persistentInfo.did.didString);
     }
@@ -381,22 +384,29 @@ export class IdentityService {
         console.log("Properties:", properties);
 
         let userDID = await this.getLocalDID();
-        userDID.issueCredential(
-            intent.params.appinstancedid,
-            "#app-id-credential",
-            ['AppIdCredential'],
-            30, // one month - after that, we'll need to generate this credential again.
-            properties,
-            persistentInfo.did.storePassword,
-            async (issuedCredential) => {
-                console.log("Sending appidcredissue intent response for intent id " + intent.intentId);
-                let credentialAsString = await issuedCredential.toString();
-                await appManager.sendIntentResponse(null, {
-                    credential: credentialAsString
-                }, intent.intentId);
-            }, async (err) => {
-                console.error("Failed to issue the app id credential...", err);
-            });
+        if (userDID) {
+            userDID.issueCredential(
+                intent.params.appinstancedid,
+                "#app-id-credential",
+                ['AppIdCredential'],
+                30, // one month - after that, we'll need to generate this credential again.
+                properties,
+                persistentInfo.did.storePassword,
+                async (issuedCredential) => {
+                    console.log("Sending appidcredissue intent response for intent id " + intent.intentId);
+                    let credentialAsString = await issuedCredential.toString();
+                    appManager.sendIntentResponse(null, {
+                        credential: credentialAsString
+                    }, intent.intentId);
+                }, async (err) => {
+                    console.error("Failed to issue the app id credential...", err);
+                }
+            );
+        }
+        else {
+            console.log("Sending empty appidcredissue intent response as no identity was found.");
+            await appManager.sendIntentResponse(null, {}, intent.intentId);
+        }
     }
 
     /**
@@ -431,6 +441,20 @@ export class IdentityService {
                 // just forget it and resolve.
                 console.warn(err);
                 resolve();
+            });
+        });
+    }
+
+    /**
+     * Tells if we are using the built in identity.
+     */
+    public async isUsingBuiltInIdentityWalletPreference(): Promise<boolean> {
+        return new Promise((resolve) => {
+            appManager.getPreference("internalidentity.inuse", (inUse) => {
+                resolve(inUse);
+            }, (err) => {
+                // Preference not found, this means we never created or used a built in identity.
+                resolve(false);
             });
         });
     }
